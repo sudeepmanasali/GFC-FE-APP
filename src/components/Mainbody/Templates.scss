@@ -1,0 +1,66 @@
+@import '../../Styles.scss';
+
+.template-section {
+  background-color: $bgColor;
+  padding-top: $xs;
+  padding-bottom: 2 * $lg;
+
+  .template-top {
+    @include flex-row;
+    margin-left: 180px;
+    margin-right: 180px;
+    flex-wrap: wrap;
+
+    .template-title {
+      color: #202124;
+      font-size: $md;
+    }
+
+    .template-right {
+      display: flex;
+
+      .gallery-button {
+        @include flex-row;
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 14px;
+        margin-right: $xs;
+      }
+    }
+  }
+
+  .template-body {
+    margin-left: 160px;
+    margin-right: 180px;
+    @include flex-row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+
+    .card {
+      margin-left: $lg;
+      margin-top: $sm;
+
+      .card-image {
+        box-sizing: border-box;
+        height: 120px;
+        width: 140px;
+        border-radius: 2px;
+        border: 0.5px solid #fffdf7;
+        cursor: pointer;
+      }
+
+      .card-image:hover {
+        border: 1px solid #6e2594;
+      }
+
+      .title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #202124;
+        margin-top: $xs;
+      }
+
+    }
+  }
+}

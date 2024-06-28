@@ -1,27 +1,53 @@
+// Roboto font family
 @font-face {
-  font-family: "RobotoBold";
-  src: local("RobotoBold"),
-    url("./assets/fonts/Roboto/Roboto-Bold.ttf") format("truetype");
+  font-family: "Roboto";
+  src: url("./assets/fonts/Roboto/Roboto-Bold.ttf");
   font-weight: bold;
 }
 
 @font-face {
-  font-family: "RobotoLight";
-  src: local("RobotoLight"),
-    url("./assets/fonts/Roboto/Roboto-Light.ttf") format("truetype");
+  font-family: "Roboto";
+  src: url("./assets/fonts/Roboto/Roboto-Light.ttf");
   font-weight: 300;
 }
 
 @font-face {
-  font-family: "RobotoRegular";
-  src: local("RobotoRegular"),
-    url("./assets/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
+  font-family: "Roboto";
+  src: url("./assets/fonts/Roboto/Roboto-Regular.ttf");
   font-weight: 400;
 }
 
 @font-face {
-  font-family: "RobotoMedium";
-  src: local("RobotoMedium"),
-    url("./assets/fonts/Roboto/Roboto-Medium.ttf") format("truetype");
+  font-family: "Roboto";
+  src: url("./assets/fonts/Roboto/Roboto-Medium.ttf");
   font-weight: 500;
+}
+
+// Font size variables
+$xs: 0.25rem;
+$sm: 0.75rem;
+$md: 1rem;
+$lg: 1.25rem;
+$xl: 2rem;
+
+// Colour variable
+$main: #ffffff; //white
+$black: black;
+$bgColor: #f1f3f4;
+$textColor: #5f6368;
+$inputColor: #202124;
+
+// Giving flex context to a container
+@mixin flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }

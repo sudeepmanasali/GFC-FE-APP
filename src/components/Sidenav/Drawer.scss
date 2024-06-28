@@ -1,0 +1,23 @@
+@import '../../Styles.scss';
+
+.list-item {
+  margin-right: 10px;
+
+  img {
+    height: $md;
+    width: $md;
+  }
+
+  div {
+    margin-left: $lg;
+    font-size: $sm;
+    font-weight: 600;
+    color: "grey"
+  }
+}
+
+.list-item:hover {
+  background-color: $bgColor;
+  border-radius: 0 $lg 0;
+  color: $black;
+}

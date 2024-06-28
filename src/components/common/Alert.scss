@@ -1,0 +1,136 @@
+@import "../../Styles.scss";
+
+.dialog-content {
+  width: 550px;
+
+  .icon-size {
+    font-size: $lg + $xs;
+    color: $textColor;
+    padding: 0 $xs;
+  }
+
+  .dialog-title {
+    @include flex-row;
+    font-size: $lg;
+    color: $black;
+    margin-bottom: $xs;
+    padding: $lg;
+  }
+
+  .collect-email {
+    @include flex-row;
+    justify-content: flex-start;
+    background-color: $bgColor;
+    font-size: $md;
+    padding: $md;
+
+    input {
+      margin-right: $sm;
+    }
+  }
+
+  .dialog-row {
+    @include flex-row;
+    padding: $lg;
+    border-bottom: 1px solid #F4F9F9;
+
+    .dialog-row-in {
+      @include flex-row;
+
+      .send-via {
+        font-size: $md;
+        font-weight: 500;
+        margin-right: $md;
+      }
+    }
+  }
+}
+
+.dialog-tab-panels-container {
+  display: flex;
+  flex-direction: column;
+
+  .dialog-tab-panels {
+    @include flex-column;
+    align-items: flex-start;
+    margin: 0 $lg;
+
+    .tab-text {
+      font-size: $md;
+      font-weight: 500;
+      letter-spacing: .1px;
+      line-height: $lg + $xs;
+      color: $black;
+      margin-bottom: 2 * $sm;
+    }
+
+    .text-field {
+      font-size: $sm;
+      margin-bottom: $lg + $xs;
+      width: 100%;
+    }
+
+    .include-email {
+      font-size: $md;
+      @include flex-row;
+
+      input {
+        margin-right: $sm;
+      }
+    }
+  }
+}
+
+.dialog-footer {
+  @include flex-row;
+  padding: $lg;
+  margin: $sm 0;
+
+  .dialog-footer-left {
+    @include flex-row;
+    justify-content: space-around;
+    font-size: $sm;
+    color: #4285f4;
+    font-size: $md;
+
+    .add-colab {
+      margin-right: $sm;
+    }
+  }
+
+  .dialog-button {
+    color: $textColor;
+    text-transform: capitalize;
+  }
+
+  .send {
+    @extend .dialog-button;
+    margin-left: $sm;
+  }
+}
+
+.tab-two {
+  display: flex;
+  flex-direction: "column";
+  margin: 0 $lg;
+
+  .tab-text {
+    margin-bottom: 2 * $xs;
+  }
+}
+
+.root {
+  flex-grow: 1;
+  background-color: #f0ebf8;
+
+  .tab {
+    font-size: $sm;
+    color: #5f6368;
+    text-transform: capitalize;
+    height: $sm;
+  }
+
+  .tabs {
+    height: 10;
+  }
+}

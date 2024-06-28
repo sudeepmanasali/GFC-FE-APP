@@ -1,0 +1,79 @@
+@import '../../Styles.scss';
+
+.docs-section {
+  margin: 0 160px;
+  background-color: $main;
+
+  .header {
+    @include flex-row;
+    margin-top: $md;
+
+    .header-left {
+      font-size: "16px";
+      font-weight: "500";
+      width: "fit-content";
+    }
+
+    .header-right {
+      @include flex-row;
+    }
+  }
+
+  .docs-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: $md;
+    margin-top: $lg;
+  }
+}
+
+.doc-card {
+  @include flex-column;
+  box-sizing: border-box;
+
+  .doc-image {
+    box-sizing: border-box;
+    height: 150px;
+    width: 100%;
+  }
+
+  .doc-content {
+    @include flex-row;
+    align-items: flex-start;
+    margin: $sm 0;
+    width: 100%;
+
+    .doc-info {
+      @include flex-column;
+      align-items: flex-start;
+      padding-left: $xs;
+    }
+
+    .doc-name {
+      overflow: "ellipsis";
+      margin: 0;
+      margin-bottom: $sm;
+      font-size: 14px;
+      text-transform: capitalize;
+    }
+
+    .doc-last-opened-time {
+      @include flex-row;
+
+      .content_left {
+        @include flex-row;
+        color: $textColor;
+        font-size: $sm;
+
+        .storage-icon {
+          color: $main;
+          font-size: $sm;
+          background-color: #6E2594;
+          padding: $xs;
+          margin-right: $xs;
+          border-radius: 2px;
+        }
+      }
+    }
+  }
+}

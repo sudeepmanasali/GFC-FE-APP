@@ -1,0 +1,51 @@
+@import '../../Styles.scss';
+
+.header {
+  @include flex-row;
+  height: $md + $sm;
+  background-color: $main;
+  margin: 2 * $xs 0;
+  padding: $sm 0;
+
+  .header-info {
+    @include flex-row;
+
+    .form-image {
+      height: 10 * $xs;
+      width: 10 * $xs;
+    }
+
+    .info {
+      color: $textColor;
+      font-size: $lg;
+      padding-left: $xs;
+    }
+  }
+
+  .header-search {
+    @include flex-row;
+    background-color: $bgColor;
+    border-radius: 10px;
+    color: $textColor;
+    width: 700px;
+    height: 45px;
+
+    input {
+      border: none;
+      height: 10 * $xs;
+      background: transparent;
+      outline: none;
+      width: 100%;
+    }
+  }
+
+  .row {
+    @include flex-row;
+  } 
+}
+
+@media screen and (max-width: 1040px) {
+  .header-search {
+    display: none !important;
+  }
+}
