@@ -6,21 +6,21 @@ import CropOriginalIcon from '@mui/icons-material/CropOriginal';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import NorthEastIcon from '@mui/icons-material/NorthEast';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import ShortTextIcon from '@mui/icons-material/ShortText';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
-import { Accordion, Button, FormControlLabel, IconButton, MenuItem, Select, Switch, Typography } from "@mui/material";
+import { Accordion, Button, FormControlLabel, IconButton, MenuItem, Select, Switch, Tooltip, Typography } from "@mui/material";
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useParams } from 'react-router-dom';
 import { Question } from "../../utils/Question";
+import useAxios from '../../utils/axios';
 import { HTTP_METHODS, QUESTION_TYPES, REQUEST_URLS } from "../../utils/constants";
 import "./QuestionUI.scss";
-import useAxios from '../../utils/axios';
-import { useParams } from 'react-router-dom';
+import { getCurrentDateTime } from '../../utils/util';
 
 
 export function QuestionForm() {
@@ -45,9 +45,9 @@ export function QuestionForm() {
       documentName,
       documentDescription,
       questions,
-      createdOn: '07-11-2000',
+      createdOn: getCurrentDateTime(),
       createdBy: "sudeep manasali",
-      updatedOn: '07-11-2000',
+      updatedOn: getCurrentDateTime(),
     }
     let res = await HttpRequestController(REQUEST_URLS.UPDATE_DOCUMENT, HTTP_METHODS.PUT, payload);
   }
@@ -63,22 +63,24 @@ export function QuestionForm() {
   }
 
   // updates tool box position when new question box is added
-  const updateToolBoxPosition = (questionIndex?: number): void => {
-    console.log(questions);
+  const updateToolBoxPosition = (questionIndex?: number, addQuestion = false): void => {
     setTimeout(() => {
-      if (questions.length > 0) {
+      if (inputRefs.current.length > 0 && inputRefs.current[0]) {
         let inputBoxIndex = questionIndex !== undefined ? questionIndex : questions.length - 1;
         const accordionRect = inputRefs.current[inputBoxIndex]?.getBoundingClientRect();
         if (accordionRect) {
           const scrollTop = document.getElementsByClassName('question-form')[0].scrollTop;
-          const targetTopRelativeToDiv = accordionRect.top - 133 + scrollTop;
+          let targetTopRelativeToDiv = accordionRect.top - 160 + scrollTop;
+          // when adding a new question the box will not
+          // align properly so we need it
+          if (addQuestion) {
+            targetTopRelativeToDiv += 26;
+          }
           setYOffset(targetTopRelativeToDiv > 0 ? targetTopRelativeToDiv : 0);
         }
-
-        if (questions.length === 0 || !accordionRect) {
-          setYOffset(0);
-          setCurQueIdx(0);
-        }
+      } else {
+        setYOffset(0);
+        setCurQueIdx(0);
       }
     }, 300);
   }
@@ -95,11 +97,7 @@ export function QuestionForm() {
           lastInput.focus();
         }
         const scrollTop = document.getElementsByClassName('question-form')[0].scrollTop;
-        let targetTopRelativeToDiv = accordionRect.top - 163 + scrollTop;
-        if (targetTopRelativeToDiv > yoffset) {
-          targetTopRelativeToDiv -= 26
-        }
-        console.log(targetTopRelativeToDiv, yoffset);
+        let targetTopRelativeToDiv = accordionRect.top - 160 + scrollTop;
         setYOffset(targetTopRelativeToDiv > 0 ? targetTopRelativeToDiv : 172);
       }
     }, 300);
@@ -115,7 +113,7 @@ export function QuestionForm() {
       result.source.index,
       result.destination.index
     );
-    setQuestions(itemgg);
+    setQuestions(itemF as Question[]);
   }
 
   const reorder = (list: any, startIndex: number, endIndex: number) => {
@@ -163,7 +161,9 @@ export function QuestionForm() {
     currentQuestions.splice(currQueIdx + 1, 0, new Question());
     setQuestions(currentQuestions);
     setCurQueIdx(currQueIdx => currQueIdx + 1);
-    updateToolBoxPosition(currQueIdx);
+    setTimeout(() => {
+      updateToolBoxPosition(currQueIdx, true); // Call updateToolBoxPosition after a brief delay
+    }, 0);
   }
 
   function updatedQuestionType(questionIndex: number, type: any): void {
@@ -290,9 +290,11 @@ export function QuestionForm() {
 
                                 <div className="close-box">
                                   <CropOriginalIcon className="icon" />
-                                  <IconButton aria-label="delete" onClick={() => { removeOption(i, j) }} >
-                                    <CloseIcon />
-                                  </IconButton>
+                                  <Tooltip title="Delete">
+                                    <IconButton aria-label="delete" onClick={() => { removeOption(i, j) }} >
+                                      <CloseIcon />
+                                    </IconButton>
+                                  </Tooltip>
                                 </div>
                               </div>
                             </div>
@@ -409,14 +411,16 @@ export function QuestionForm() {
             )
           }
 
-          <div className="save-form">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={updateDocument} >
-              Save
-            </Button>
-          </div>
+          {
+            !!questions.length && <div className="save-form">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={updateDocument} >
+                Save
+              </Button>
+            </div>
+          }
         </div>
 
         <div className="question-edit" style={{
