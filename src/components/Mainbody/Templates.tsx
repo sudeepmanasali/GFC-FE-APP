@@ -41,34 +41,26 @@ export function Templates() {
   }
   return (
     <div className="template-section">
-      <div className="template-top">
-        <div className="template_left">
-          <p className="template-title">Start a new form</p>
-        </div>
-        <div className="template-right">
-          <div className="gallery-button">
-            Template gallery
-            <UnfoldMoreSharpIcon fontSize="small" />
+      <div className="actual-width">
+        <div className="template-top">
+          <div className="template_left">
+            <p className="template-title">Start a new form</p>
           </div>
-          <IconButton>
-            <MoreVertSharpIcon fontSize="small" />
-          </IconButton>
+          <div className="template-right">
+            <div className="gallery-button">
+              Template gallery
+              <UnfoldMoreSharpIcon fontSize="small" />
+            </div>
+            <IconButton>
+              <MoreVertSharpIcon fontSize="small" />
+            </IconButton>
+          </div>
         </div>
-      </div>
-      <div className="template-body">
-        <div className="card" onClick={createform}>
-          <img src={blank} className="card-image" />
-          <p className="title">Create new form</p>
-        </div>
-
-        <div className="card" onClick={createform}>
-          <img src={blank} className="card-image" />
-          <p className="title">Create new form</p>
-        </div>
-
-        <div className="card" onClick={createform}>
-          <img src={blank} className="card-image" />
-          <p className="title">Create new form</p>
+        <div className="template-body">
+          <div className="card" onClick={createform}>
+            <img src={blank} className="card-image" />
+            <p className="title">Blank Form</p>
+          </div>
         </div>
       </div>
     </div>

@@ -329,3 +329,22 @@
     }
   }
 }
+
+.add-margin {
+  margin-top: $sm;
+}
+
+.edit-question-paper-icon {
+  color: $main;
+  background-color: #4285f4;
+  padding: $md;
+  border-radius: 50%;
+  margin-right: $sm;
+  position: fixed;
+  bottom: $xl;
+  right: $xl;
+}
+
+.question-paper-full-height {
+  height: 100%;
+}

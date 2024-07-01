@@ -9,6 +9,8 @@ import Login from './components/Login';
 import FormHeader from './components/ConfigureQuestionPaper/FormHEader';
 import CenteredTabs from './components/common/Tabs';
 import { ROUTE_PATHS } from './utils/constants';
+import { ThemeProvider } from './components/contexts/themeContext';
+import { QuestionPaperProvider } from './components/contexts/questionPaperContext';
 
 function App() {
   return (
@@ -20,14 +22,17 @@ function App() {
             <Mainbody /></>}>
           </Route>
           <Route path={ROUTE_PATHS.LOGIN} element={<Login />}></Route>
-          <Route path={ROUTE_PATHS.QUESTION_PAPER} element={<>
-            <FormHeader />
-            <CenteredTabs />
-          </>}>
+          <Route path={ROUTE_PATHS.QUESTION_PAPER} element={
+            <QuestionPaperProvider>
+              <ThemeProvider>
+                <FormHeader />
+                <CenteredTabs />
+              </ThemeProvider>
+            </QuestionPaperProvider>}>
           </Route>
         </Routes>
-      </BrowserRouter>
-    </div>
+      </BrowserRouter >
+    </div >
   );
 }
 

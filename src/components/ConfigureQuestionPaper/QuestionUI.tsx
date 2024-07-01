@@ -21,9 +21,11 @@ import useAxios from '../../utils/axios';
 import { HTTP_METHODS, QUESTION_TYPES, REQUEST_URLS } from "../../utils/constants";
 import "./QuestionUI.scss";
 import { getCurrentDateTime } from '../../utils/util';
-
+import { useQuestionPaper } from '../contexts/questionPaperContext';
+import CreateIcon from '@mui/icons-material/Create';
 
 export function QuestionForm() {
+  const { questionPaper, setQuestionPaper } = useQuestionPaper();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [yoffset, setYOffset] = useState(0);
   const [currQueIdx, setCurQueIdx] = useState(0);
@@ -38,6 +40,12 @@ export function QuestionForm() {
     getAllQuestions();
     setYOffset(172);
   }, []);
+
+  useEffect(() => {
+    if (questionPaper.showQuestionPaper) {
+      closeAllExpandedQuestion();
+    }
+  }, [questionPaper]);
 
   async function updateDocument(): Promise<void> {
     let payload = {
@@ -60,7 +68,27 @@ export function QuestionForm() {
       return new Question(question);
     });
     setQuestions(documentQuestions);
+
+    setQuestionPaper({
+      ...questionPaper,
+      documentName: document.documentName
+    });
   }
+
+  // Function to handle scroll event
+  const handleScroll = (event: any) => {
+    setTimeout(() => {
+      let elementRect = document.getElementsByClassName('MuiAccordion-root')[currQueIdx + 1]?.getBoundingClientRect();
+      let containerRect = document.getElementsByClassName('question-form')[0]?.getBoundingClientRect();
+      const isVisible = elementRect.top >= containerRect.top &&
+        elementRect.bottom <= containerRect.bottom;
+      if (isVisible) {
+        updateToolBoxPosition(currQueIdx);
+      } else {
+        setYOffset(event.target.scrollTop > 170 ? event.target.scrollTop : 165);
+      }
+    }, 300);
+  };
 
   // updates tool box position when new question box is added
   const updateToolBoxPosition = (questionIndex?: number, addQuestion = false): void => {
@@ -215,14 +243,21 @@ export function QuestionForm() {
         {(provided) => (
           <div ref={provided.innerRef}  {...provided.draggableProps} {...provided.dragHandleProps}>
             <div>
-              <div className="question-container">
-                <div className="drag-indicator-box">
-                  <DragIndicatorIcon className="icon" fontSize="small" />
-                </div>
-                <Accordion onChange={(event) => { handleExpand(i); handleFocus(event, i); }} expanded={questions[i].open} className={questions[i].open ? "add-border" : ""}>
-
+              <div className={questionPaper.showQuestionPaper ? " question-container add-margin" : "question-container"}>
+                {
+                  !questionPaper.showQuestionPaper && (
+                    <div className="drag-indicator-box">
+                      <DragIndicatorIcon className="icon" fontSize="small" />
+                    </div>
+                  )
+                }
+                <Accordion onChange={(event) => {
+                  if (!questionPaper.showQuestionPaper) {
+                    handleExpand(i); handleFocus(event, i);
+                  }
+                }} expanded={questions[i].open} className={questions[i].open ? "add-border" : ""}>
                   <AccordionSummary aria-controls="panel1-content" id="panel1-header">
-                    {!questions[i].open && (
+                    {(!questions[i].open) && (
 
                       <div className="saved-questions">
                         <Typography className="question-text">
@@ -231,9 +266,9 @@ export function QuestionForm() {
                         {question.options.map((op, j) => (
                           <div key={j}>
                             <div className="option-box">
-                              <FormControlLabel className="form-control-label" disabled
+                              <FormControlLabel className="form-control-label" disabled={!questionPaper.showQuestionPaper}
                                 control={
-                                  <input type={question.questionType} className="option-input-box" disabled />
+                                  <input type={question.questionType} className="option-input-box" disabled={!questionPaper.showQuestionPaper} />
                                 }
                                 label={
                                   <Typography className="option-text-value">
@@ -289,8 +324,10 @@ export function QuestionForm() {
                                 />
 
                                 <div className="close-box">
-                                  <CropOriginalIcon className="icon" />
-                                  <Tooltip title="Delete">
+                                  <Tooltip title="Add Image" placement="bottom">
+                                    <CropOriginalIcon className="icon" />
+                                  </Tooltip>
+                                  <Tooltip title="Remove">
                                     <IconButton aria-label="delete" onClick={() => { removeOption(i, j) }} >
                                       <CloseIcon />
                                     </IconButton>
@@ -318,22 +355,18 @@ export function QuestionForm() {
                         <div className="question-footer">
 
                           <div className="question-bottom">
-                            <IconButton
-                              aria-label="Copy"
-                              data-toggle="tooltip"
-                              data-placement="top"
-                              title={"Copy question"}
-                              onClick={() => { copyQuestion(i) }}>
-                              <ContentCopyIcon />
-                            </IconButton>
-                            <IconButton
-                              aria-label="delete"
-                              data-toggle="tooltip"
-                              data-placement="top"
-                              title={"Delete question"}
-                              onClick={() => { deleteQuestion(i) }}>
-                              <DeleteOutlineIcon />
-                            </IconButton>
+                            <Tooltip title="Duplicate" placement="bottom">
+                              <IconButton
+                                onClick={() => { copyQuestion(i) }}>
+                                <ContentCopyIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Delete" placement="bottom">
+                              <IconButton
+                                onClick={() => { deleteQuestion(i) }}>
+                                <DeleteOutlineIcon />
+                              </IconButton>
+                            </Tooltip>
                             <div>
                               <span className="required">
                                 Required
@@ -366,32 +399,34 @@ export function QuestionForm() {
 
   return (
     <div>
-      <div className="question-form" id="question-form">
+      <div className={questionPaper.showQuestionPaper ? "question-paper-full-height question-form" : "question-form"} id="question-form" onScroll={handleScroll}>
         <div className="section">
           <div className="question-title-section">
             <div className="question-form-top">
               <input
                 type="text"
                 className="question-form-top-name MuiAccordion-root"
-                placeholder={documentName ? documentName : "Untitled form"}
-                value={documentName ? documentName : "Untitled form"}
+                placeholder="Untitled form"
+                value={documentName}
                 onChange={(e) => {
                   setDocName(e.target.value);
+                  setQuestionPaper({
+                    ...questionPaper,
+                    documentName: e.target.value
+                  });
                 }}
-              ></input>
+                readOnly={questionPaper.showQuestionPaper}
+              />
               <input
                 type="text"
                 className="question-form-top-desc"
-                placeholder={
-                  documentDescription
-                    ? documentDescription
-                    : "Document description"
-                }
+                placeholder="Document description"
                 value={documentDescription}
                 onChange={(e) => {
                   setDocDesc(e.target.value);
                 }}
-              ></input>
+                readOnly={questionPaper.showQuestionPaper}
+              />
             </div>
           </div>
 
@@ -417,21 +452,31 @@ export function QuestionForm() {
                 variant="contained"
                 color="primary"
                 onClick={updateDocument} >
-                Save
+                {questionPaper.showQuestionPaper ? "Submit" : "Save"}
               </Button>
             </div>
           }
         </div>
 
-        <div className="question-edit" style={{
-          top: `${yoffset}px`,
-        }} ref={divRef}>
-          <AddCircleOutlineIcon className="edit" onClick={() => addQuestionTemplate()} />
-          <OndemandVideoIcon className="edit" />
-          <CropOriginalIcon className="edit" />
-          <TextFieldsIcon className="edit" />
-        </div>
+        {
+          !questionPaper.showQuestionPaper && (<div className="question-edit" style={{ top: `${yoffset}px` }} ref={divRef}>
+            <Tooltip title="Add question" placement="right">
+              <AddCircleOutlineIcon className="edit" onClick={() => addQuestionTemplate()} />
+            </Tooltip>
+            <OndemandVideoIcon className="edit" />
+            <CropOriginalIcon className="edit" />
+            <TextFieldsIcon className="edit" />
+          </div>)
+        }
       </div>
-    </div>
+      {questionPaper.showQuestionPaper && (
+        <Tooltip title="Edit">
+          <CreateIcon className="edit-question-paper-icon" onClick={() => (setQuestionPaper({
+            ...questionPaper,
+            showQuestionPaper: !questionPaper.showQuestionPaper
+          }))} />
+        </Tooltip>)
+      }
+    </div >
   )
 }

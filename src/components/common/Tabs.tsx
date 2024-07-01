@@ -6,6 +6,7 @@ import React from 'react';
 import { a11yProps } from '../../utils/util';
 import "./Alert.scss";
 import { QuestionForm } from '../ConfigureQuestionPaper/QuestionUI';
+import { useQuestionPaper } from '../contexts/questionPaperContext';
 
 function TabPanel(props: any) {
   const { children, value, index, ...other } = props;
@@ -25,26 +26,35 @@ TabPanel.propTypes = {
 
 export default function CenteredTabs() {
   const [value, setValue] = React.useState(0);
+  const { questionPaper } = useQuestionPaper();
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
   };
 
   return (
-    <Paper className="root">
-      <Tabs value={value} onChange={handleChange} indicatorColor="primary"
-        textColor="primary" centered className="tabs">
-        <Tab label="Questions" className="tab" {...a11yProps(0)} />
-        <Tab label="Responses" className="tab" {...a11yProps(1)} />
-      </Tabs>
+    <>
+      {
+        !questionPaper.showQuestionPaper && (<Paper className="root">
+          <Tabs value={value} onChange={handleChange} indicatorColor="primary"
+            textColor="primary" centered className="tabs">
+            <Tab label="Questions" className="tab" {...a11yProps(0)} />
+            <Tab label="Responses" className="tab" {...a11yProps(1)} />
+          </Tabs>
 
-      <TabPanel value={value} index={0}>
-        <QuestionForm />
-      </TabPanel>
+          <TabPanel value={value} index={0}>
+            <QuestionForm />
+          </TabPanel>
 
-      <TabPanel value={value} index={1}>
-        <div>user form responses</div>
-      </TabPanel>
-    </Paper>
+          <TabPanel value={value} index={1}>
+            <div>user form responses</div>
+          </TabPanel>
+        </Paper>)
+      }
+
+      {
+        questionPaper.showQuestionPaper && (<QuestionForm />)
+      }
+    </>
   )
 }
