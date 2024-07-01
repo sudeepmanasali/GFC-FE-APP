@@ -6,6 +6,7 @@ import { HTTP_METHODS, REQUEST_URLS, ROUTE_PATHS, SESSION_STORAGE_KEYS, UserLogi
 import { validateEmail } from "../utils/util";
 import "./Login.scss";
 import useAxios from "../utils/axios";
+import toast from "react-hot-toast";
 
 function Login() {
   let [isLogin, setIsLogin] = useState(false);
@@ -18,8 +19,11 @@ function Login() {
     const res = await HttpRequestController(REQUEST_URLS.LOGIN, HTTP_METHODS.POST, login);
     if (res) {
       localStorage.setItem(SESSION_STORAGE_KEYS.TOKEN, res.token);
-      localStorage.setItem(SESSION_STORAGE_KEYS.USER_ID, res.userId);
-      localStorage.setItem(SESSION_STORAGE_KEYS.EMAIL, res.email);
+      localStorage.setItem(SESSION_STORAGE_KEYS.EMAIL, res.data.email);
+      localStorage.setItem(SESSION_STORAGE_KEYS.USER_ID, res.data.userId);
+      localStorage.setItem(SESSION_STORAGE_KEYS.USERNAME, res.data.username);
+      localStorage.setItem(SESSION_STORAGE_KEYS.IS_AUTH, 'true');
+      toast.success(res.message);
       navigate(ROUTE_PATHS.HOME);
       setLogin({});
     }

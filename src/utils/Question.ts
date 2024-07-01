@@ -44,6 +44,11 @@ export class Question {
         return this;
     }
 
+    updateOption(optionIndex: number, value: string): Question {
+        this.options[optionIndex].option = value;
+        return this;
+    }
+
     updateQuestionType(type: string): Question {
         this.questionType = type as QUESTION_TYPES;
         return this;

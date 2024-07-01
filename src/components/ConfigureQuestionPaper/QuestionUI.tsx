@@ -23,6 +23,7 @@ import "./QuestionUI.scss";
 import { getCurrentDateTime } from '../../utils/util';
 import { useQuestionPaper } from '../contexts/questionPaperContext';
 import CreateIcon from '@mui/icons-material/Create';
+import toast from 'react-hot-toast';
 
 export function QuestionForm() {
   const { questionPaper, setQuestionPaper } = useQuestionPaper();
@@ -37,7 +38,15 @@ export function QuestionForm() {
   let HttpRequestController = useAxios();
 
   useEffect(() => {
-    getAllQuestions();
+    toast.promise(
+      getAllQuestions(),
+      {
+        loading: 'Saving...',
+        success: 'Questions loaded successfully',
+        error: 'System error, Questions not loaded..!'
+      }
+    );
+
     setYOffset(172);
   }, []);
 
@@ -58,6 +67,7 @@ export function QuestionForm() {
       updatedOn: getCurrentDateTime(),
     }
     let res = await HttpRequestController(REQUEST_URLS.UPDATE_DOCUMENT, HTTP_METHODS.PUT, payload);
+    toast.success("Questions saved successfully");
   }
 
   async function getAllQuestions(): Promise<void> {
@@ -142,6 +152,10 @@ export function QuestionForm() {
       result.destination.index
     );
     setQuestions(itemF as Question[]);
+    toast.success('Questions swapped', {
+      position: "bottom-right"
+    });
+    updateToolBoxPosition(currQueIdx);
   }
 
   const reorder = (list: any, startIndex: number, endIndex: number) => {
@@ -192,6 +206,9 @@ export function QuestionForm() {
     setTimeout(() => {
       updateToolBoxPosition(currQueIdx, true); // Call updateToolBoxPosition after a brief delay
     }, 0);
+    toast.success('Question added', {
+      position: "bottom-right"
+    })
   }
 
   function updatedQuestionType(questionIndex: number, type: any): void {
@@ -219,6 +236,15 @@ export function QuestionForm() {
       updateToolBoxPosition(questionIndex);
     }
     setQuestions(() => [...currentQuestions]);
+    toast.success('Question deleted', {
+      position: "bottom-right"
+    })
+  }
+
+  function handleOptionValue(value: string, i: number, j: number) {
+    var currentQuestions = [...questions];
+    currentQuestions[i].updateOption(j, value);
+    setQuestions(currentQuestions);
   }
 
   function copyQuestion(questionIndex: number): void {
@@ -228,6 +254,9 @@ export function QuestionForm() {
     currentQuestions.splice(questionIndex + 1, 0, copiedQuestion);
     setQuestions(currentQuestions);
     updateToolBoxPosition(questionIndex + 1);
+    toast.success('Question copied', {
+      position: "bottom-right"
+    })
   }
 
   function requiredQuestion(questionIndex: number) {
@@ -258,7 +287,6 @@ export function QuestionForm() {
                 }} expanded={questions[i].open} className={questions[i].open ? "add-border" : ""}>
                   <AccordionSummary aria-controls="panel1-content" id="panel1-header">
                     {(!questions[i].open) && (
-
                       <div className="saved-questions">
                         <Typography className="question-text">
                           {(i + 1).toString() + ". " + question.question}
@@ -268,7 +296,9 @@ export function QuestionForm() {
                             <div className="option-box">
                               <FormControlLabel className="form-control-label" disabled={!questionPaper.showQuestionPaper}
                                 control={
-                                  <input type={question.questionType} className="option-input-box" disabled={!questionPaper.showQuestionPaper} />
+                                  <input type={question.questionType}
+                                    value={question.options[j].option}
+                                    className="option-input-box" disabled={!questionPaper.showQuestionPaper} />
                                 }
                                 label={
                                   <Typography className="option-text-value">
@@ -320,7 +350,9 @@ export function QuestionForm() {
                                 )}
 
                                 <input type="text" className="text-input" placeholder="option"
-                                  onChange={(e) => { console.log(e) }}
+                                  onChange={(e) => {
+                                    handleOptionValue(e.target.value, i, j);
+                                  }}
                                 />
 
                                 <div className="close-box">

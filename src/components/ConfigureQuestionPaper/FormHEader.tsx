@@ -18,6 +18,8 @@ import { useTheme } from "../contexts/themeContext";
 import { useQuestionPaper } from "../contexts/questionPaperContext";
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
+import { useNavigate } from "react-router-dom";
+import { ROUTE_PATHS } from "../../utils/constants";
 
 
 function FormHeader() {
@@ -28,6 +30,7 @@ function FormHeader() {
     name: 'sudeep'
   }
   const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
 
 
   const changeTheme = () => {
@@ -52,6 +55,11 @@ function FormHeader() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const goToHomeScreen = () => {
+    navigate(ROUTE_PATHS.HOME);
+  };
+
 
   return (
     <React.Fragment>
@@ -88,6 +96,7 @@ function FormHeader() {
               <img
                 src={form_image}
                 alt="noImage"
+                onClick={goToHomeScreen}
               />
               <input
                 type="text"

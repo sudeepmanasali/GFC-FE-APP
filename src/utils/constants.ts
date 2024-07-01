@@ -14,7 +14,9 @@ export enum HTTP_METHODS {
 export enum SESSION_STORAGE_KEYS {
   TOKEN = 'TOKEN',
   USER_ID = 'USER_ID',
-  EMAIL = 'EMAIL'
+  EMAIL = 'EMAIL',
+  USERNAME = 'USERNAME',
+  IS_AUTH = 'IS_AUTH'
 }
 
 export enum ACTION_TYPES {
@@ -31,9 +33,9 @@ export enum QUESTION_TYPES {
 }
 
 export enum ROUTE_PATHS {
-  HOME = 'home',
-  LOGIN = 'login',
-  QUESTION_PAPER = 'question-paper/:documentId'
+  HOME = '/home',
+  LOGIN = '/login',
+  QUESTION_PAPER = '/question-paper/:documentId'
 }
 
 export enum UPDATE_QUESTION_STATE {

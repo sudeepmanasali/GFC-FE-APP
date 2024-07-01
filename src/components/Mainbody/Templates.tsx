@@ -34,10 +34,9 @@ export function Templates() {
       createdBy: "sudeep manasali",
       updatedOn: '07-11-2000',
     });
-
-    console.log(res);
-
-    navigate(`/question-paper/${res.documentId}`);
+    if (res) {
+      navigate(`/question-paper/${res?.documentId}`);
+    }
   }
   return (
     <div className="template-section">
