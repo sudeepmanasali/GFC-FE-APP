@@ -16,31 +16,34 @@ function Login() {
   const HttpRequestController = useAxios();
 
   const handleLogin = async () => {
-    const res = await HttpRequestController(REQUEST_URLS.LOGIN, HTTP_METHODS.POST, login);
-    if (res) {
-      localStorage.setItem(SESSION_STORAGE_KEYS.TOKEN, res.token);
-      localStorage.setItem(SESSION_STORAGE_KEYS.EMAIL, res.data.email);
-      localStorage.setItem(SESSION_STORAGE_KEYS.USER_ID, res.data.userId);
-      localStorage.setItem(SESSION_STORAGE_KEYS.USERNAME, res.data.username);
-      localStorage.setItem(SESSION_STORAGE_KEYS.IS_AUTH, 'true');
-      toast.success(res.message);
-      navigate(ROUTE_PATHS.HOME);
-      setLogin({});
+    if (login.email && login.password && validateEmail(login.email)) {
+      const res = await HttpRequestController(REQUEST_URLS.LOGIN, HTTP_METHODS.POST, login);
+      if (res) {
+        localStorage.setItem(SESSION_STORAGE_KEYS.TOKEN, res.token);
+        localStorage.setItem(SESSION_STORAGE_KEYS.EMAIL, res.data.email);
+        localStorage.setItem(SESSION_STORAGE_KEYS.USER_ID, res.data.userId);
+        localStorage.setItem(SESSION_STORAGE_KEYS.USERNAME, res.data.username);
+        localStorage.setItem(SESSION_STORAGE_KEYS.IS_AUTH, 'true');
+        toast.success(res.message);
+        navigate(ROUTE_PATHS.HOME);
+        setLogin({});
+      }
+    } else {
+      toast.error("Please enter all required details...!");
     }
   };
 
-  const [error, setError] = useState(false);
   const handleRegister = async () => {
-    try {
-      if (register) {
-        await HttpRequestController(REQUEST_URLS.REGISTER, HTTP_METHODS.POST, register);
-        setIsLogin(true);
-        setRegister({});
-      }
-    } catch (error) {
-      console.log(error);
+    if (register.username && register.username.trim().length != 0 && register.password && register.email && register.phone) {
+      await HttpRequestController(REQUEST_URLS.REGISTER, HTTP_METHODS.POST, register);
+      setIsLogin(true);
+      setRegister({});
+      toast.success("User registered successfully");
+    } else {
+      toast.error("Please enter all required details...!");
     }
   };
+
   return (
     <div className="login-container">
       <div className="main">
@@ -112,12 +115,10 @@ function Login() {
               placeholder="Password"
             />
             <button onClick={handleLogin}>Sign In</button>
-            <div
-              onClick={(e) => {
-                setIsLogin(!isLogin);
-              }}
-              className="text-button"
-            >
+            <div onClick={(e) => {
+              setIsLogin(!isLogin);
+            }}
+              className="text-button">
               Sign Up
             </div>
           </div>

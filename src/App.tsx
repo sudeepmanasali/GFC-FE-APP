@@ -30,6 +30,7 @@ function App() {
     <div style={{ overflow: 'hidden' }}>
       <BrowserRouter>
         <Routes>
+          <Route path={ROUTE_PATHS.LOGIN} element={<Login />}></Route>
           <Route path={ROUTE_PATHS.HOME} element={isLogin ? (
             <>
               <Header />
