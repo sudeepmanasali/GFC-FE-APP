@@ -2,6 +2,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CreateIcon from '@mui/icons-material/Create';
 import CropOriginalIcon from '@mui/icons-material/CropOriginal';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -15,15 +16,14 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import { useEffect, useRef, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { Question } from "../../utils/Question";
 import useAxios from '../../utils/axios';
 import { HTTP_METHODS, QUESTION_TYPES, REQUEST_URLS } from "../../utils/constants";
-import "./QuestionUI.scss";
 import { getCurrentDateTime } from '../../utils/util';
 import { useQuestionPaper } from '../contexts/questionPaperContext';
-import CreateIcon from '@mui/icons-material/Create';
-import toast from 'react-hot-toast';
+import "./QuestionUI.scss";
 
 export function QuestionForm() {
   const { questionPaper, setQuestionPaper } = useQuestionPaper();
@@ -46,7 +46,6 @@ export function QuestionForm() {
         error: 'System error, Questions not loaded..!'
       }
     );
-
     setYOffset(172);
   }, []);
 
@@ -56,7 +55,7 @@ export function QuestionForm() {
     }
   }, [questionPaper]);
 
-  async function updateDocument(): Promise<void> {
+  const updateDocument = async (): Promise<void> => {
     let payload = {
       _id: params.documentId,
       documentName,
@@ -70,7 +69,7 @@ export function QuestionForm() {
     toast.success("Questions saved successfully");
   }
 
-  async function getAllQuestions(): Promise<void> {
+  const getAllQuestions = async (): Promise<void> => {
     let { document } = await HttpRequestController(REQUEST_URLS.GET_DOCUMENT + `/${params.documentId}`, HTTP_METHODS.GET);
     setDocDesc(document.documentDescription);
     setDocName(document.documentName);
@@ -78,7 +77,6 @@ export function QuestionForm() {
       return new Question(question);
     });
     setQuestions(documentQuestions);
-
     setQuestionPaper({
       ...questionPaper,
       documentName: document.documentName
@@ -124,7 +122,7 @@ export function QuestionForm() {
   }
 
   // updates tool box position when user focus particular question box
-  function handleFocus(event: any, questionIndex: number): void {
+  const handleFocus = (event: any, questionIndex: number): void => {
     setCurQueIdx(questionIndex);
     setTimeout(() => {
       const accordionRoot = event.target.closest('.MuiAccordion-root');
@@ -165,39 +163,39 @@ export function QuestionForm() {
     return result;
   };
 
-  function closeAllExpandedQuestion(): void {
+  const closeAllExpandedQuestion = (): void => {
     let expandedQuestion = questions.map((question: Question) => {
       return question.openAndCloseQuestion(false);
     });
     setQuestions(expandedQuestion);
   }
 
-  function handleExpand(questionIndex: number): void {
+  const handleExpand = (questionIndex: number): void => {
     let expandedQuestion = questions.map((question: Question, j: number) => {
       return question.openAndCloseQuestion(questionIndex == j);
     });
     setQuestions(expandedQuestion);
   }
 
-  function updateQuestion(question: string, questionIndex: number): void {
+  const updateQuestion = (question: string, questionIndex: number): void => {
     let currentQuestions = [...questions];
     currentQuestions[questionIndex].updateQuestion(question);
     setQuestions(currentQuestions);
   }
 
-  function addOption(questionIndex: number): void {
+  const addOption = (questionIndex: number): void => {
     let currentQuestions = [...questions];
     currentQuestions[questionIndex].addNewOption();
     setQuestions(currentQuestions);
   }
 
-  function removeOption(questionIndex: number, optionIndex: number): void {
+  const removeOption = (questionIndex: number, optionIndex: number): void => {
     let currentQuestions = [...questions];
     currentQuestions[questionIndex].removeOption(optionIndex);
     setQuestions(currentQuestions);
   }
 
-  function addQuestionTemplate(): void {
+  const addQuestionTemplate = (): void => {
     closeAllExpandedQuestion();
     let currentQuestions = [...questions];
     currentQuestions.splice(currQueIdx + 1, 0, new Question());
@@ -211,13 +209,13 @@ export function QuestionForm() {
     })
   }
 
-  function updatedQuestionType(questionIndex: number, type: any): void {
+  const updatedQuestionType = (questionIndex: number, type: any): void => {
     let currentQuestions = [...questions];
     currentQuestions[questionIndex].updateQuestionType(type);
     setQuestions(currentQuestions);
   }
 
-  function deleteQuestion(questionIndex: number): void {
+  const deleteQuestion = (questionIndex: number): void => {
     closeAllExpandedQuestion();
     let currentQuestions = [...questions];
     currentQuestions.splice(questionIndex, 1);
@@ -241,13 +239,13 @@ export function QuestionForm() {
     })
   }
 
-  function handleOptionValue(value: string, i: number, j: number) {
-    var currentQuestions = [...questions];
-    currentQuestions[i].updateOption(j, value);
+  const handleOptionValue = (value: string, questionIndex: number, optionIndex: number): void => {
+    let currentQuestions = [...questions];
+    currentQuestions[questionIndex].updateOption(optionIndex, value);
     setQuestions(currentQuestions);
   }
 
-  function copyQuestion(questionIndex: number): void {
+  const copyQuestion = (questionIndex: number): void => {
     closeAllExpandedQuestion();
     let currentQuestions = [...questions];
     let copiedQuestion = currentQuestions[questionIndex].copyQuestion();
@@ -259,14 +257,14 @@ export function QuestionForm() {
     })
   }
 
-  function requiredQuestion(questionIndex: number) {
+  const requiredQuestion = (questionIndex: number): void => {
     let currentQuestions = [...questions];
     currentQuestions[questionIndex].updateRequiredType();
     setQuestions(currentQuestions);
   }
 
 
-  function displayQuestions() {
+  const displayQuestions = () => {
     return questions.map((question: Question, i: any) => {
       return <Draggable key={question._id} draggableId={question._id} index={i}>
         {(provided) => (

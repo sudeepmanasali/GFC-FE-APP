@@ -12,7 +12,6 @@ const useAxios = () => {
       Authorization: localStorage.getItem(SESSION_STORAGE_KEYS.TOKEN),
     };
 
-    console.log(headers);
     try {
       let response;
       switch (method.toUpperCase()) {
