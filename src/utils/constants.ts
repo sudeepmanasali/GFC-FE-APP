@@ -113,4 +113,4 @@ export interface QuestionPaperContextType {
 }
 
 // constant variables
-export let BACKEND_URL = 'http://localhost:9000';
+export let BACKEND_URL = 'https://gfc-be-app.onrender.com';

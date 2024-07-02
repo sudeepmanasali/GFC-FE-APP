@@ -19,10 +19,11 @@
     "isolatedModules": false,
     "noEmit": true,
     "jsx": "react-jsx",
+    "baseUrl": "src",
     "paths": {
-      "@app/styles": ["./src/Styles.scss"],
-      "@app/images": ["./src/assets/images"],
-      "@app/utils": ["./src/utils"]
+      "@app/styles": ["Styles.scss"],
+      "@app/images": ["assets/images"],
+      "@app/utils": ["utils"]
     }
   },
   "include": [

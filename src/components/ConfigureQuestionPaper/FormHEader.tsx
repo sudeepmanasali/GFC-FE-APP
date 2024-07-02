@@ -1,17 +1,14 @@
 import React from "react";
 import form_image from "../../assets/images/forms-icon.png";
 import avatarimage from "../../assets/images/2.jpg";
-// import axios from "axios";
 import DeleteIcon from '@mui/icons-material/Delete';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { Avatar, Button, IconButton, Modal, Tooltip } from "@mui/material";
-import { useParams } from "react-router";
 import "./FormHeader.scss";
 import ColorLensIcon from '@mui/icons-material/ColorLens';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { shortString } from "../../utils/util";
 import AlertDialog from "../common/Alert";
 import { useTheme } from "../contexts/themeContext";

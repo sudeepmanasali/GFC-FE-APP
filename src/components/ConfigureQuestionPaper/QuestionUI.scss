@@ -155,7 +155,7 @@
       .add-question-body {
         @include flex-row;
         width: 100%;
-        margin-bottom: $sm / 2;
+        margin-bottom: 6px;
 
         .add-option-btn {
           text-transform: none;

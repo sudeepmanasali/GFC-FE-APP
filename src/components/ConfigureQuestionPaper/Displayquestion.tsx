@@ -24,6 +24,7 @@ export const DisplayQuestion: React.FC<propsType> = ({ questionIndex, question, 
           <FormControlLabel className="form-control-label" disabled={!showQuestionPaper}
             control={
               <input type={question.questionType}
+                name={questionIndex.toString()}
                 placeholder={question.questionType}
                 className="option-section-type-box" disabled={!showQuestionPaper} />
             }
