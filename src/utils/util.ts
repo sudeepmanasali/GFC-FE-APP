@@ -1,3 +1,5 @@
+import { QUESTION_TYPES } from "./constants";
+
 // all the functions, methods
 export const shortString = (text: string, maxLen = 9) => {
   return text?.length <= maxLen ? text : text?.substring(0, maxLen)?.concat("...");
@@ -37,3 +39,8 @@ export const getCurrentDateTime = (): string => {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
+
+export const isSelectionType = (questionType: QUESTION_TYPES): boolean => {
+  let selectionTypes = [QUESTION_TYPES.RADIO, QUESTION_TYPES.CHECKBOX];
+  return selectionTypes.includes(questionType);
+}

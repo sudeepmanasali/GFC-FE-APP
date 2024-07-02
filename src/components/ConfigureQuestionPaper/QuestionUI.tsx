@@ -1,17 +1,10 @@
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CloseIcon from '@mui/icons-material/Close';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CreateIcon from '@mui/icons-material/Create';
 import CropOriginalIcon from '@mui/icons-material/CropOriginal';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import ShortTextIcon from '@mui/icons-material/ShortText';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
-import { Accordion, Button, FormControlLabel, IconButton, MenuItem, Select, Switch, Tooltip, Typography } from "@mui/material";
+import { Accordion, Button, Tooltip } from "@mui/material";
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import { useEffect, useRef, useState } from "react";
@@ -20,10 +13,14 @@ import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { Question } from "../../utils/Question";
 import useAxios from '../../utils/axios';
-import { HTTP_METHODS, QUESTION_TYPES, REQUEST_URLS } from "../../utils/constants";
+import { HTTP_METHODS, REQUEST_URLS } from "../../utils/constants";
 import { getCurrentDateTime } from '../../utils/util';
 import { useQuestionPaper } from '../contexts/questionPaperContext';
+import { DisplayQuestion } from './Displayquestion';
+import { OptionBox } from './OptionBox';
+import { QuestionBoxFooter } from './QuestionBoxFooter';
 import "./QuestionUI.scss";
+import { SelectBox } from './SelectBox';
 
 export function QuestionForm() {
   const { questionPaper, setQuestionPaper } = useQuestionPaper();
@@ -63,7 +60,7 @@ export function QuestionForm() {
       questions,
       updatedOn: getCurrentDateTime(),
     }
-    let res = await HttpRequestController(REQUEST_URLS.UPDATE_DOCUMENT, HTTP_METHODS.PUT, payload);
+    await HttpRequestController(REQUEST_URLS.UPDATE_DOCUMENT, HTTP_METHODS.PUT, payload);
     toast.success("Questions saved successfully");
   }
 
@@ -263,7 +260,7 @@ export function QuestionForm() {
 
   const displayQuestions = () => {
     return questions.map((question: Question, i: any) => {
-      return <Draggable key={question._id} draggableId={question._id} index={i}>
+      return <Draggable key={question._id} draggableId={question._id} index={i} isDragDisabled={questionPaper.showQuestionPaper}>
         {(provided) => (
           <div ref={provided.innerRef}  {...provided.draggableProps} {...provided.dragHandleProps}>
             <div>
@@ -282,35 +279,10 @@ export function QuestionForm() {
                 }} expanded={questions[i].open} className={questions[i].open ? "add-border" : ""}>
                   <AccordionSummary aria-controls="panel1-content" id="panel1-header">
                     {(!questions[i].open) && (
-                      <div className="saved-questions">
-                        <Typography className="question-text">
-                          {(i + 1).toString() + ". " + question.question}
-                        </Typography>
-                        {question.options.map((op, j) => (
-                          <div key={j}>
-                            <div className="option-box">
-                              <FormControlLabel className="form-control-label" disabled={!questionPaper.showQuestionPaper}
-                                control={
-                                  <input type={question.questionType}
-                                    value={question.options[j].option}
-                                    className="option-input-box" disabled={!questionPaper.showQuestionPaper} />
-                                }
-                                label={
-                                  <Typography className="option-text-value">
-                                    {question.options[j].option}
-                                  </Typography>
-                                }
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      <DisplayQuestion questionIndex={i} question={question}
+                        showQuestionPaper={questionPaper.showQuestionPaper} />
                     )}
                   </AccordionSummary>
-
-
-
-
                   <div className="question-box">
                     <AccordionDetails className="add-question">
                       <div>
@@ -319,98 +291,17 @@ export function QuestionForm() {
                             ref={(e) => { inputRefs.current[i] = e }}
                             placeholder="Question" value={question.question} onChange={(e) => { updateQuestion(e.target.value, i) }} />
 
-                          <Select className="select" value={question.questionType} onChange={(e) => { updatedQuestionType(i, e.target.value) }}>
-                            <MenuItem id="checkbox" value={QUESTION_TYPES.CHECKBOX} >
-                              <div className="menu-item"><CheckBoxIcon /> <span className="label">Checkboxes</span></div>
-                            </MenuItem>
-
-                            <MenuItem id="radio" value={QUESTION_TYPES.RADIO} >
-                              <div className="menu-item"><RadioButtonCheckedIcon /> <span className="label">Multiple choices</span></div>
-                            </MenuItem>
-                          </Select>
+                          {/* selection box to select question type  */}
+                          <SelectBox questionIndex={i} updatedQuestionType={updatedQuestionType} question={question} />
                         </div>
 
-                        {question?.options.length > 0 &&
-                          question.options.map((op, j) => (
-                            <div className="add-question-body" key={j}>
-                              <div className="option-box">
-                                {question.questionType != QUESTION_TYPES.TEXT ? (
-                                  <input
-                                    disabled
-                                    className="question-text-input"
-                                    type={question.questionType}
-                                  />
-                                ) : (
-                                  <ShortTextIcon className="icon" />
-                                )}
+                        {/* adding options */}
+                        <OptionBox question={question} questionIndex={i}
+                          addOption={addOption} removeOption={removeOption} handleOptionValue={handleOptionValue} />
 
-                                <input type="text" className="text-input" placeholder="option"
-                                  onChange={(e) => {
-                                    handleOptionValue(e.target.value, i, j);
-                                  }}
-                                />
-
-                                <div className="close-box">
-                                  <Tooltip title="Add Image" placement="bottom">
-                                    <CropOriginalIcon className="icon" />
-                                  </Tooltip>
-                                  <Tooltip title="Remove">
-                                    <IconButton aria-label="delete" onClick={() => { removeOption(i, j) }} >
-                                      <CloseIcon />
-                                    </IconButton>
-                                  </Tooltip>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-
-                        {question.options.length < 5 && (
-                          <div className="add-question-body">
-                            <div className="option-box">
-                              <input disabled
-                                className="question_text_input"
-                                type={question.questionType}
-                              />
-                              <Button size="small" onClick={() => { addOption(i); }} className="add-option-btn">
-                                Add Option
-                              </Button>
-                            </div>
-
-                          </div>
-                        )}
-
-                        <div className="question-footer">
-
-                          <div className="question-bottom">
-                            <Tooltip title="Duplicate" placement="bottom">
-                              <IconButton
-                                onClick={() => { copyQuestion(i) }}>
-                                <ContentCopyIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Delete" placement="bottom">
-                              <IconButton
-                                onClick={() => { deleteQuestion(i) }}>
-                                <DeleteOutlineIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <div>
-                              <span className="required">
-                                Required
-                              </span>
-                              <Switch
-                                name="checkedA"
-                                color="primary"
-                                checked={question.required}
-                                onClick={() => { requiredQuestion(i) }}
-                              />
-                            </div>
-
-                            <IconButton>
-                              <MoreVertIcon />
-                            </IconButton>
-                          </div>
-                        </div>
+                        {/* question box footer with action buttons  */}
+                        <QuestionBoxFooter isRequired={question.required} questionIndex={i} copyQuestion={copyQuestion}
+                          deleteQuestion={deleteQuestion} requiredQuestion={requiredQuestion} />
                       </div>
                     </AccordionDetails>
                   </div>
@@ -456,15 +347,12 @@ export function QuestionForm() {
               />
             </div>
           </div>
-
-
           {
             questions && (<DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="questions">
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
                     {displayQuestions()}
-
                     {provided.placeholder}
                   </div>
                 )}

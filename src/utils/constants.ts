@@ -29,7 +29,9 @@ export enum ACTION_TYPES {
 export enum QUESTION_TYPES {
   RADIO = 'radio',
   CHECKBOX = 'checkbox',
-  TEXT = 'text'
+  TEXT = 'text',
+  DATE = 'date',
+  TIME = 'datetime-local'
 }
 
 export enum ROUTE_PATHS {

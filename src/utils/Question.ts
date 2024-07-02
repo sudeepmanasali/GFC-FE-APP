@@ -1,6 +1,6 @@
 
 import { Option, QUESTION_TYPES } from "./constants";
-import { createRandomString } from "./util";
+import { createRandomString, isSelectionType } from "./util";
 import { ObjectId } from 'bson';
 
 export class Question {
@@ -51,6 +51,9 @@ export class Question {
 
     updateQuestionType(type: string): Question {
         this.questionType = type as QUESTION_TYPES;
+        if (!isSelectionType(type as QUESTION_TYPES)) {
+            this.options = [];
+        }
         return this;
     }
 
