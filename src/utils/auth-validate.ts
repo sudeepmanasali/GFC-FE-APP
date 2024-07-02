@@ -1,4 +1,5 @@
 import { jwtDecode } from "jwt-decode";
+import { SESSION_STORAGE_KEYS } from "./constants";
 
 export function validateTokenAge() {
     let user: any, jwt: string;
@@ -17,7 +18,7 @@ export function validateTokenAge() {
 export default function useAuthListener() {
     let user: any, jwt;
     try {
-        jwt = localStorage.getItem("token") || "";
+        jwt = localStorage.getItem(SESSION_STORAGE_KEYS.TOKEN) || "";
         user = jwtDecode(jwt);
     } catch (error) {
         user = null;

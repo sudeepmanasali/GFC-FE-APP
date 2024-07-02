@@ -6,19 +6,28 @@ import { Card } from "./Card";
 import { FOLDER_VIEW_TYPE, HTTP_METHODS, REQUEST_URLS } from "../../utils/constants";
 import "./Mainbody.scss";
 import useAxios from "../../utils/axios";
+import useAuthListener from "../../utils/auth-validate";
+import { compareDesc, parseISO } from "date-fns";
 
 export const Mainbody = () => {
   const [type, setType] = useState(FOLDER_VIEW_TYPE.FILE);
   const HttpRequestController = useAxios();
   const [files, setFiles] = useState([]);
+  const { user } = useAuthListener();
 
   const getDocuments = async () => {
-    try {
-      let res = await HttpRequestController(REQUEST_URLS.GET_ALL_DOCUMENTS, HTTP_METHODS.GET);
-      setFiles(res.documents);
-    } catch (error) {
+    let res = await HttpRequestController(REQUEST_URLS.GET_ALL_DOCUMENTS, HTTP_METHODS.POST, { username: user.username });
+    const getDateTime = (dateTimeStr: string): Date => {
+      return parseISO(dateTimeStr);
+    };
 
-    }
+    // sorting the documents based on the updated time
+    res.documents.sort((doc1: any, doc2: any) => {
+      const dateA = getDateTime(doc1.updatedOn);
+      const dateB = getDateTime(doc2.updatedOn);
+      return compareDesc(dateA, dateB);
+    });
+    setFiles(res.documents);
   }
 
   useEffect(() => {

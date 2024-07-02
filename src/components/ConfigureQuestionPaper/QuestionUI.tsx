@@ -43,7 +43,7 @@ export function QuestionForm() {
       {
         loading: 'Saving...',
         success: 'Questions loaded successfully',
-        error: 'System error, Questions not loaded..!'
+        error: 'Internal Server Error'
       }
     );
     setYOffset(172);
@@ -61,8 +61,6 @@ export function QuestionForm() {
       documentName,
       documentDescription,
       questions,
-      createdOn: getCurrentDateTime(),
-      createdBy: "sudeep manasali",
       updatedOn: getCurrentDateTime(),
     }
     let res = await HttpRequestController(REQUEST_URLS.UPDATE_DOCUMENT, HTTP_METHODS.PUT, payload);
@@ -262,7 +260,6 @@ export function QuestionForm() {
     currentQuestions[questionIndex].updateRequiredType();
     setQuestions(currentQuestions);
   }
-
 
   const displayQuestions = () => {
     return questions.map((question: Question, i: any) => {
@@ -481,13 +478,12 @@ export function QuestionForm() {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={updateDocument} >
+                onClick={!questionPaper.showQuestionPaper ? updateDocument : () => { }} >
                 {questionPaper.showQuestionPaper ? "Submit" : "Save"}
               </Button>
             </div>
           }
         </div>
-
         {
           !questionPaper.showQuestionPaper && (<div className="question-edit" style={{ top: `${yoffset}px` }} ref={divRef}>
             <Tooltip title="Add question" placement="right">

@@ -11,7 +11,6 @@ const useAxios = () => {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem(SESSION_STORAGE_KEYS.TOKEN),
     };
-
     try {
       let response;
       switch (method.toUpperCase()) {
@@ -40,7 +39,6 @@ const useAxios = () => {
               : error.response.statusText
           )
           : toast.error("Network error");
-      else toast.error("Unknown error");
     }
   };
 

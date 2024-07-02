@@ -7,14 +7,17 @@ import { IconButton } from "@mui/material";
 import useAxios from "../../utils/axios";
 import { HTTP_METHODS, REQUEST_URLS } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
+import { getCurrentDateTime } from "../../utils/util";
+import useAuthListener from "../../utils/auth-validate";
 
 export function Templates() {
   let HttpRequestController = useAxios();
   let navigate = useNavigate();
+  let { user } = useAuthListener();
 
-  async function createform(e: any): Promise<void> {
+  const createform = async (e: any): Promise<void> => {
     e.preventDefault();
-    let questions_list = [
+    let defaultQuestions = [
       {
         question: "Question",
         questionType: "radio",
@@ -22,17 +25,17 @@ export function Templates() {
         points: 0,
         options: [{ option: "Option 1" }],
         open: true,
-        required: false,
+        required: false
       },
     ];
 
     let res = await HttpRequestController(REQUEST_URLS.CREATE_NEW_DOCUMENT, HTTP_METHODS.POST, {
-      documentName: "untitled_form",
+      documentName: "untitled-form",
       documentDescription: "Add Description",
-      questions: questions_list,
-      createdOn: '07-11-2000',
-      createdBy: "sudeep manasali",
-      updatedOn: '07-11-2000',
+      questions: defaultQuestions,
+      createdOn: getCurrentDateTime(),
+      createdBy: user.username,
+      updatedOn: getCurrentDateTime(),
     });
     if (res) {
       navigate(`/question-paper/${res?.documentId}`);
