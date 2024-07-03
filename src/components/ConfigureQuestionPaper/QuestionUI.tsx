@@ -79,8 +79,8 @@ export function QuestionForm() {
   }
 
   const isElementBoxVisible = (questionIndex?: number): boolean => {
-    let focusedBox = questionIndex !== undefined ? questionIndex : currQueIdx + 1;
-    let elementRect = document.getElementsByClassName('MuiAccordion-root')[focusedBox]?.getBoundingClientRect();
+    let focusedBox = questionIndex !== undefined ? questionIndex : currQueIdx;
+    let elementRect = document.getElementsByClassName('MuiAccordion-root')[focusedBox + 1]?.getBoundingClientRect();
     let containerRect = document.getElementsByClassName('question-form')[0]?.getBoundingClientRect();
     return elementRect?.top >= containerRect?.top && elementRect.bottom <= containerRect.bottom;
   }
