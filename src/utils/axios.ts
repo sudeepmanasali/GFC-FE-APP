@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 // custom hook to handle the requests
 const useAxios = () => {
   const HttpRequestController = async (path: string, method = HTTP_METHODS.GET, body: any = null) => {
-    let url = process.env.REACT_APP_BACKEND_URL + path;
+    let url = 'https://gfc-be-app.onrender.com' + path;
     let headers = {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem(SESSION_STORAGE_KEYS.TOKEN),
