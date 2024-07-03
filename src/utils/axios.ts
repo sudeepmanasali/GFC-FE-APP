@@ -1,12 +1,12 @@
 
 import axios, { AxiosError } from 'axios';
-import { BACKEND_URL, HTTP_METHODS, SESSION_STORAGE_KEYS } from './constants';
+import { HTTP_METHODS, SESSION_STORAGE_KEYS } from './constants';
 import toast from 'react-hot-toast';
 
 // custom hook to handle the requests
 const useAxios = () => {
   const HttpRequestController = async (path: string, method = HTTP_METHODS.GET, body: any = null) => {
-    let url = BACKEND_URL + path;
+    let url = process.env.REACT_APP_BACKEND_URL + path;
     let headers = {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem(SESSION_STORAGE_KEYS.TOKEN),

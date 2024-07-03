@@ -78,13 +78,17 @@ export function QuestionForm() {
     });
   }
 
+  const isElementBoxVisible = (questionIndex?: number): boolean => {
+    let focusedBox = questionIndex !== undefined ? questionIndex : currQueIdx + 1;
+    let elementRect = document.getElementsByClassName('MuiAccordion-root')[focusedBox]?.getBoundingClientRect();
+    let containerRect = document.getElementsByClassName('question-form')[0]?.getBoundingClientRect();
+    return elementRect?.top >= containerRect?.top && elementRect.bottom <= containerRect.bottom;
+  }
+
   // Function to handle scroll event
   const handleScroll = (event: any) => {
     setTimeout(() => {
-      let elementRect = document.getElementsByClassName('MuiAccordion-root')[currQueIdx + 1]?.getBoundingClientRect();
-      let containerRect = document.getElementsByClassName('question-form')[0]?.getBoundingClientRect();
-      const isVisible = elementRect.top >= containerRect.top &&
-        elementRect.bottom <= containerRect.bottom;
+      const isVisible = isElementBoxVisible();
       if (isVisible) {
         updateToolBoxPosition(currQueIdx);
       } else {
@@ -96,40 +100,24 @@ export function QuestionForm() {
   // updates tool box position when new question box is added
   const updateToolBoxPosition = (questionIndex?: number, addQuestion = false): void => {
     setTimeout(() => {
-      if (inputRefs.current.length > 0 && inputRefs.current[0]) {
-        let inputBoxIndex = questionIndex !== undefined ? questionIndex : questions.length - 1;
-        const accordionRect = inputRefs.current[inputBoxIndex]?.getBoundingClientRect();
-        if (accordionRect) {
-          const scrollTop = document.getElementsByClassName('question-form')[0].scrollTop;
-          let targetTopRelativeToDiv = accordionRect.top - 160 + scrollTop;
-          // when adding a new question the box will not
-          // align properly so we need it
-          if (addQuestion) {
-            targetTopRelativeToDiv += 26;
+      if (isElementBoxVisible(questionIndex)) {
+        if (inputRefs.current.length > 0 && inputRefs.current[0]) {
+          let inputBoxIndex = questionIndex !== undefined ? questionIndex : questions.length - 1;
+          const accordionRect = inputRefs.current[inputBoxIndex]?.getBoundingClientRect();
+          if (accordionRect) {
+            const scrollTop = document.getElementsByClassName('question-form')[0].scrollTop;
+            let targetTopRelativeToDiv = accordionRect.top - 180 + scrollTop;
+            // when adding a new question the box will not
+            // align properly so we need it
+            if (addQuestion) {
+              targetTopRelativeToDiv += 26;
+            }
+            setYOffset(targetTopRelativeToDiv > 0 ? targetTopRelativeToDiv : 0);
           }
-          setYOffset(targetTopRelativeToDiv > 0 ? targetTopRelativeToDiv : 0);
+        } else {
+          setYOffset(0);
+          setCurQueIdx(0);
         }
-      } else {
-        setYOffset(0);
-        setCurQueIdx(0);
-      }
-    }, 300);
-  }
-
-  // updates tool box position when user focus particular question box
-  const handleFocus = (event: any, questionIndex: number): void => {
-    setCurQueIdx(questionIndex);
-    setTimeout(() => {
-      const accordionRoot = event.target.closest('.MuiAccordion-root');
-      if (accordionRoot) {
-        const accordionRect = accordionRoot.getBoundingClientRect();
-        if (inputRefs.current.length > 0) {
-          let lastInput = inputRefs.current[questionIndex];
-          lastInput.focus();
-        }
-        const scrollTop = document.getElementsByClassName('question-form')[0].scrollTop;
-        let targetTopRelativeToDiv = accordionRect.top - 160 + scrollTop;
-        setYOffset(targetTopRelativeToDiv > 0 ? targetTopRelativeToDiv : 172);
       }
     }, 300);
   }
@@ -170,6 +158,7 @@ export function QuestionForm() {
       return question.openAndCloseQuestion(questionIndex == j);
     });
     setQuestions(expandedQuestion);
+    setCurQueIdx(questionIndex);
   }
 
   const updateQuestion = (question: string, questionIndex: number): void => {
@@ -242,6 +231,7 @@ export function QuestionForm() {
 
   const copyQuestion = (questionIndex: number): void => {
     closeAllExpandedQuestion();
+    setCurQueIdx(questionIndex => questionIndex + 1);
     let currentQuestions = [...questions];
     let copiedQuestion = currentQuestions[questionIndex].copyQuestion();
     currentQuestions.splice(questionIndex + 1, 0, copiedQuestion);
@@ -274,9 +264,10 @@ export function QuestionForm() {
                 }
                 <Accordion onChange={(event) => {
                   if (!questionPaper.showQuestionPaper) {
-                    handleExpand(i); handleFocus(event, i);
+                    handleExpand(i);
+                    updateToolBoxPosition(i);
                   }
-                }} expanded={questions[i].open} className={questions[i].open ? "add-border" : ""}>
+                }} expanded={questions[i].open} className={questions[i].open ? "MuiAccordion-root add-border" : "MuiAccordion-root"}>
                   <AccordionSummary aria-controls="panel1-content" id="panel1-header">
                     {(!questions[i].open) && (
                       <DisplayQuestion questionIndex={i} question={question}

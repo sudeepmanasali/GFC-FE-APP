@@ -111,6 +111,3 @@ export interface QuestionPaperContextType {
   questionPaper: QuestionPaper;
   setQuestionPaper: React.Dispatch<React.SetStateAction<QuestionPaper>>;
 }
-
-// constant variables
-export let BACKEND_URL = 'https://gfc-be-app.onrender.com';
