@@ -1,4 +1,3 @@
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AppsIcon from '@mui/icons-material/Apps';
 import SearchIcon from '@mui/icons-material/Search';
 import { IconButton } from "@mui/material";
@@ -6,6 +5,7 @@ import React from "react";
 import formimage from "../../assets/images/forms-icon.png";
 import "./Header.scss"
 import TemporaryDrawer from '../Sidenav/Drawer';
+import ProfileButton from 'components/common/Dropdown';
 
 export const Header = () => {
   return <div className="header">
@@ -24,12 +24,7 @@ export const Header = () => {
       <IconButton style={{ margin: "0px" }}>
         <AppsIcon style={{ fontSize: "22px" }} />
       </IconButton>
-
-      <div className="dropdown">
-        <IconButton className="mode dropbtn">
-          <AccountCircleIcon />
-        </IconButton>
-      </div>
+      <ProfileButton />
     </div>
   </div>
 }

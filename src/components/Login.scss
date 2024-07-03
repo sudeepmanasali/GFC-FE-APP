@@ -9,17 +9,18 @@
 
   .main {
     width: 50%;
-    height: 500px;
+    height: 600px;
     overflow: hidden;
     border-radius: 10px;
     box-shadow: 5px 20px 50px #000;
     @include flex-column;
+    justify-content: center;
 
     label {
       @include flex-column;
       color: $main;
       font-size: 2 * $md;
-      margin: 3 * $md;
+      margin: 2 * $md;
       font-weight: bold;
       cursor: pointer;
       transition: 0.5s ease-in-out;
@@ -34,6 +35,9 @@
       border: none;
       outline: none;
       border-radius: $xs;
+    }
+
+    .input-box {
       margin-bottom: $lg;
     }
 
@@ -65,8 +69,8 @@
     }
 
     .error-text {
-      color: white;
-      margin: 0;
+      color: $main;
+      margin: 2*$xs 0;
     }
   }
 }

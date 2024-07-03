@@ -50,7 +50,12 @@ export enum REQUEST_URLS {
   CREATE_NEW_DOCUMENT = '/create-document',
   GET_ALL_DOCUMENTS = '/documents',
   GET_DOCUMENT = '/document',
+  DELETE_DOCUMENT = '/delete',
   UPDATE_DOCUMENT = '/update-document'
+}
+
+export enum PROFILE_ACTION_MENUS {
+  LOGOUT = 'Logout'
 }
 
 // interfaces
@@ -101,6 +106,12 @@ export interface Theme {
 export interface ThemeContextType {
   theme: Theme;
   setTheme: React.Dispatch<React.SetStateAction<Theme>>;
+}
+
+export interface AuthContextType {
+  isLoggedIn: boolean;
+  handleLogin: React.Dispatch<React.SetStateAction<any>>;
+  handleLogout: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export interface QuestionPaper {

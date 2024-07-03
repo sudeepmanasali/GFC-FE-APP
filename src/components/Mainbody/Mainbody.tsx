@@ -6,14 +6,14 @@ import { Card } from "./Card";
 import { FOLDER_VIEW_TYPE, HTTP_METHODS, REQUEST_URLS } from "../../utils/constants";
 import "./Mainbody.scss";
 import useAxios from "../../utils/axios";
-import useAuthListener from "../../utils/auth-validate";
+import getUserInfo from "../../utils/auth-validate";
 import { compareDesc, parseISO } from "date-fns";
 
 export const Mainbody = () => {
   const [type, setType] = useState(FOLDER_VIEW_TYPE.FILE);
   const HttpRequestController = useAxios();
   const [files, setFiles] = useState([]);
-  const { user } = useAuthListener();
+  const { user } = getUserInfo();
 
   const getDocuments = async () => {
     let res = await HttpRequestController(REQUEST_URLS.GET_ALL_DOCUMENTS, HTTP_METHODS.POST, { username: user.username });

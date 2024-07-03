@@ -27,6 +27,7 @@ export function QuestionForm() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [yoffset, setYOffset] = useState(0);
   const [currQueIdx, setCurQueIdx] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [documentName, setDocName] = useState("untitled Document");
   const [documentDescription, setDocDesc] = useState("Add Description");
   const inputRefs = useRef<HTMLInputElement[] | any>([]);
@@ -35,10 +36,11 @@ export function QuestionForm() {
   let HttpRequestController = useAxios();
 
   useEffect(() => {
+    setLoading(true);
     toast.promise(
       getAllQuestions(),
       {
-        loading: 'Saving...',
+        loading: 'loading...',
         success: 'Questions loaded successfully',
         error: 'Internal Server Error'
       }
@@ -76,6 +78,7 @@ export function QuestionForm() {
       ...questionPaper,
       documentName: document.documentName
     });
+    setLoading(false);
   }
 
   const isElementBoxVisible = (questionIndex?: number): boolean => {
@@ -126,7 +129,7 @@ export function QuestionForm() {
     if (!result.destination) {
       return;
     }
-    var itemgg = [...questions];
+    let itemgg = [...questions];
     const itemF = reorder(
       itemgg,
       result.source.index,
@@ -136,7 +139,6 @@ export function QuestionForm() {
     toast.success('Questions swapped', {
       position: "bottom-right"
     });
-    updateToolBoxPosition(currQueIdx);
   }
 
   const reorder = (list: any, startIndex: number, endIndex: number) => {
@@ -364,7 +366,7 @@ export function QuestionForm() {
           }
         </div>
         {
-          !questionPaper.showQuestionPaper && (<div className="question-edit" style={{ top: `${yoffset}px` }} ref={divRef}>
+          !loading && !questionPaper.showQuestionPaper && (<div className="question-edit" style={{ top: `${yoffset}px` }} ref={divRef}>
             <Tooltip title="Add question" placement="right">
               <AddCircleOutlineIcon className="edit" onClick={() => addQuestionTemplate()} />
             </Tooltip>

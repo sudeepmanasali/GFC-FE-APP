@@ -8,12 +8,12 @@ import useAxios from "../../utils/axios";
 import { HTTP_METHODS, REQUEST_URLS } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
 import { getCurrentDateTime } from "../../utils/util";
-import useAuthListener from "../../utils/auth-validate";
+import getUserInfo from "../../utils/auth-validate";
 
 export function Templates() {
   let HttpRequestController = useAxios();
   let navigate = useNavigate();
-  let { user } = useAuthListener();
+  let { user } = getUserInfo();
 
   const createform = async (e: any): Promise<void> => {
     e.preventDefault();

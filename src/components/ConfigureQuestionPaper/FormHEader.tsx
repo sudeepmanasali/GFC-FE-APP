@@ -1,25 +1,27 @@
 import React from "react";
 import form_image from "../../assets/images/forms-icon.png";
-import avatarimage from "../../assets/images/2.jpg";
 import DeleteIcon from '@mui/icons-material/Delete';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
-import { Avatar, Button, IconButton, Modal, Tooltip } from "@mui/material";
+import { Button, IconButton, Modal, Tooltip } from "@mui/material";
 import "./FormHeader.scss";
 import ColorLensIcon from '@mui/icons-material/ColorLens';
-import { shortString } from "../../utils/util";
 import AlertDialog from "../common/Alert";
 import { useTheme } from "../contexts/themeContext";
 import { useQuestionPaper } from "../contexts/questionPaperContext";
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
-import { useNavigate } from "react-router-dom";
-import { ROUTE_PATHS } from "../../utils/constants";
+import { useNavigate, useParams } from "react-router-dom";
+import { HTTP_METHODS, REQUEST_URLS, ROUTE_PATHS } from "../../utils/constants";
+import toast from "react-hot-toast";
+import useAxios from "utils/axios";
+import ProfileButton from "components/common/Dropdown";
 
 
 function FormHeader() {
+  const HttpRequestController = useAxios();
   const { theme, setTheme } = useTheme();
   const { questionPaper, setQuestionPaper } = useQuestionPaper();
   const user = {
@@ -28,15 +30,7 @@ function FormHeader() {
   }
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
-
-
-  const changeTheme = () => {
-    setTheme({
-      ...theme,
-      backgroundColor: theme.backgroundColor === '#ffffff' ? '#000000' : '#ffffff',
-      textColor: theme.textColor === '#000000' ? '#ffffff' : '#000000',
-    });
-  };
+  let params = useParams();
 
   const openQuestionPaper = () => {
     setQuestionPaper({
@@ -57,7 +51,23 @@ function FormHeader() {
     navigate(ROUTE_PATHS.HOME);
   };
 
+  const sendDeleteRequest = async () => {
+    const res = await HttpRequestController(REQUEST_URLS.DELETE_DOCUMENT + `/${params.documentId}`, HTTP_METHODS.DELETE);
+    if (res) {
+      goToHomeScreen();
+    }
+  }
 
+  const deleteDocument = () => {
+    toast.promise(
+      sendDeleteRequest(),
+      {
+        loading: 'Request in progress',
+        success: 'Document deleted successfully',
+        error: 'Document is not deleted, Please try again'
+      }
+    );
+  };
   return (
     <React.Fragment>
       {
@@ -81,6 +91,7 @@ function FormHeader() {
                   </Button>
                   <Button
                     variant="contained"
+                    onClick={deleteDocument}
                   >
                     Delete
                   </Button>
@@ -145,29 +156,7 @@ function FormHeader() {
                   <MoreVertIcon className="form-header-icon mode" />
                 </IconButton>
               </Tooltip>
-
-              <div className="dropdown">
-                <IconButton className="mode dropbtn">
-                  <Avatar src={avatarimage} />
-                </IconButton>
-                <div className="dropdown-content">
-                  <a data-toggle="tooltip" data-placement="top" title={user.email}>
-                    {shortString(user.email, 12)}
-                  </a>
-                  <a data-toggle="tooltip" data-placement="top" title={user.name}>
-                    {shortString(user.name, 12)}
-                  </a>
-                  <a
-                    style={{ color: "blue" }}
-                    onClick={() => {
-                      localStorage.clear();
-                      // history.push("/login");
-                    }}
-                  >
-                    Logout
-                  </a>
-                </div>
-              </div>
+              <ProfileButton />
             </div>
           </div></>)
       }
