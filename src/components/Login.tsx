@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-// import useAuthListener, { validateTokenAge } from "./AuthValidate";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { HTTP_METHODS, REQUEST_URLS, ROUTE_PATHS, SESSION_STORAGE_KEYS, UserLogin, UserRegister } from "../utils/constants";
 import { validateEmail } from "../utils/util";
@@ -15,21 +13,31 @@ function Login() {
   const navigate = useNavigate();
   const HttpRequestController = useAxios();
 
+  const sendLoginRequest = async () => {
+    const res = await HttpRequestController(REQUEST_URLS.LOGIN, HTTP_METHODS.POST, login);
+    if (res) {
+      localStorage.setItem(SESSION_STORAGE_KEYS.TOKEN, res.token);
+      localStorage.setItem(SESSION_STORAGE_KEYS.EMAIL, res.data.email);
+      localStorage.setItem(SESSION_STORAGE_KEYS.USER_ID, res.data.userId);
+      localStorage.setItem(SESSION_STORAGE_KEYS.USERNAME, res.data.username);
+      localStorage.setItem(SESSION_STORAGE_KEYS.IS_AUTH, 'true');
+      navigate(ROUTE_PATHS.HOME);
+      setLogin({});
+    }
+  }
+
   const handleLogin = async () => {
     if (login.email && login.password && validateEmail(login.email)) {
-      const res = await HttpRequestController(REQUEST_URLS.LOGIN, HTTP_METHODS.POST, login);
-      if (res) {
-        localStorage.setItem(SESSION_STORAGE_KEYS.TOKEN, res.token);
-        localStorage.setItem(SESSION_STORAGE_KEYS.EMAIL, res.data.email);
-        localStorage.setItem(SESSION_STORAGE_KEYS.USER_ID, res.data.userId);
-        localStorage.setItem(SESSION_STORAGE_KEYS.USERNAME, res.data.username);
-        localStorage.setItem(SESSION_STORAGE_KEYS.IS_AUTH, 'true');
-        toast.success(res.message);
-        navigate(ROUTE_PATHS.HOME);
-        setLogin({});
-      }
+      toast.promise(
+        sendLoginRequest(),
+        {
+          loading: 'Request in progress',
+          success: 'Logged in successfully',
+          error: 'Login Failed, Please try again..!'
+        }
+      );
     } else {
-      toast.error("Please enter all required details...!");
+      toast.error("Please enter all valid details...!");
     }
   };
 
