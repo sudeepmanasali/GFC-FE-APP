@@ -47,7 +47,6 @@
       padding-bottom: 2 * $xs;
       letter-spacing: 0.1;
       word-break: break-all;
-
     }
 
     .option-box {
@@ -79,7 +78,7 @@
           font-size: $md;
           font-weight: 400;
           line-height: $lg;
-          color: #202124;
+          color: $inputColor;
           letter-spacing: 0.1;
         }
       }
@@ -364,4 +363,11 @@
 
 .question-paper-full-height {
   height: 100%;
+}
+
+@media screen and (max-width: 760px) {
+  .question-form {
+    width: 90%;
+    padding: 0 $xl;
+  }
 }

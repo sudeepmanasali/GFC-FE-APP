@@ -15,7 +15,7 @@
     flex-wrap: wrap;
 
     .template-title {
-      color: #202124;
+      color: $inputColor;
       font-size: $md;
     }
 
@@ -58,10 +58,17 @@
       .title {
         font-size: 14px;
         font-weight: 500;
-        color: #202124;
+        color: $inputColor;
         margin-top: $xs;
       }
+    }
+  }
+}
 
+@media screen and (max-width: 760px) {
+  .template-section {
+    .actual-width {
+      padding: 0 $xl;
     }
   }
 }

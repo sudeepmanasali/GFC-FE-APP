@@ -78,3 +78,16 @@
     }
   }
 }
+
+@media screen and (max-width: 760px) {
+  .docs-section {
+    .header {
+      padding: 0 $xl;
+    }
+
+    .docs-container {
+      padding: 0 $xl;
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}

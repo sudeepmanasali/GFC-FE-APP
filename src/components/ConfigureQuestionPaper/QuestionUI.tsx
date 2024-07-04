@@ -101,8 +101,11 @@ export function QuestionForm() {
   };
 
   // updates tool box position when new question box is added
-  const updateToolBoxPosition = (questionId: string): void => {
+  const updateToolBoxPosition = (questionId: string, bringIntoView = false): void => {
     setTimeout(() => {
+      if (!isElementBoxVisible(questionId) && bringIntoView) {
+        document.getElementById(questionId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
       if (isElementBoxVisible(questionId)) {
         const accordionRect = document.getElementById(questionId)?.getBoundingClientRect();
         if (accordionRect) {
@@ -178,7 +181,7 @@ export function QuestionForm() {
     setQuestions(currentQuestions);
     setCurQueIdx(currQueIdx => currQueIdx + 1);
     setTimeout(() => {
-      updateToolBoxPosition(newQue._id);
+      updateToolBoxPosition(newQue._id, true);
     }, 0);
     toast.success('Question added', {
       position: "bottom-right"
@@ -253,7 +256,7 @@ export function QuestionForm() {
                 <Accordion onChange={(event) => {
                   if (!questionPaper.showQuestionPaper) {
                     handleExpand(i);
-                    updateToolBoxPosition(question._id);
+                    updateToolBoxPosition(question._id, true);
                   }
                 }} expanded={questions[i].open} className={questions[i].open ? "MuiAccordion-root add-border" : "MuiAccordion-root"}>
                   <AccordionSummary aria-controls="panel1-content" id="panel1-header">

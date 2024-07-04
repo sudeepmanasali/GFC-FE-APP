@@ -16,7 +16,7 @@
     }
 
     .form-header-icon {
-      color: #202124;
+      color: $inputColor;
       font-size: $lg;
       margin: 0 $xs;
     }
@@ -31,7 +31,7 @@
       font-size: $md;
       line-height: $lg + $xs;
       margin: 0 $md;
-      color: #202124;
+      color: $inputColor;
     }
   }
 
