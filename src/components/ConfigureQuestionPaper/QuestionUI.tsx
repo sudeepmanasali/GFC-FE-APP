@@ -45,7 +45,6 @@ export function QuestionForm() {
         error: 'Internal Server Error'
       }
     );
-    setYOffset(172);
   }, []);
 
   useEffect(() => {
@@ -71,6 +70,7 @@ export function QuestionForm() {
     setDocDesc(document.documentDescription);
     setDocName(document.documentName);
     let documentQuestions = document.questions.map((question: Question) => {
+      question.open = false;
       return new Question(question);
     });
     setQuestions(documentQuestions);
@@ -81,9 +81,9 @@ export function QuestionForm() {
     setLoading(false);
   }
 
-  const isElementBoxVisible = (questionIndex?: number): boolean => {
-    let focusedBox = questionIndex !== undefined ? questionIndex : currQueIdx;
-    let elementRect = document.getElementsByClassName('MuiAccordion-root')[focusedBox + 1]?.getBoundingClientRect();
+  const isElementBoxVisible = (id?: string): boolean => {
+    let questionId = id === undefined ? questions[currQueIdx]?._id : id;
+    let elementRect = document.getElementById(questionId)?.getBoundingClientRect() || { top: 0, bottom: 0 };
     let containerRect = document.getElementsByClassName('question-form')[0]?.getBoundingClientRect();
     return elementRect?.top >= containerRect?.top && elementRect.bottom <= containerRect.bottom;
   }
@@ -93,33 +93,22 @@ export function QuestionForm() {
     setTimeout(() => {
       const isVisible = isElementBoxVisible();
       if (isVisible) {
-        updateToolBoxPosition(currQueIdx);
+        updateToolBoxPosition(questions[currQueIdx]._id);
       } else {
-        setYOffset(event.target.scrollTop > 170 ? event.target.scrollTop : 165);
+        setYOffset(event.target.scrollTop);
       }
     }, 300);
   };
 
   // updates tool box position when new question box is added
-  const updateToolBoxPosition = (questionIndex?: number, addQuestion = false): void => {
+  const updateToolBoxPosition = (questionId: string): void => {
     setTimeout(() => {
-      if (isElementBoxVisible(questionIndex)) {
-        if (inputRefs.current.length > 0 && inputRefs.current[0]) {
-          let inputBoxIndex = questionIndex !== undefined ? questionIndex : questions.length - 1;
-          const accordionRect = inputRefs.current[inputBoxIndex]?.getBoundingClientRect();
-          if (accordionRect) {
-            const scrollTop = document.getElementsByClassName('question-form')[0].scrollTop;
-            let targetTopRelativeToDiv = accordionRect.top - 180 + scrollTop;
-            // when adding a new question the box will not
-            // align properly so we need it
-            if (addQuestion) {
-              targetTopRelativeToDiv += 26;
-            }
-            setYOffset(targetTopRelativeToDiv > 0 ? targetTopRelativeToDiv : 0);
-          }
-        } else {
-          setYOffset(0);
-          setCurQueIdx(0);
+      if (isElementBoxVisible(questionId)) {
+        const accordionRect = document.getElementById(questionId)?.getBoundingClientRect();
+        if (accordionRect) {
+          const scrollTop = document.getElementsByClassName('question-form')[0].scrollTop;
+          let targetTopRelativeToDiv = accordionRect.top - 120 + scrollTop;
+          setYOffset(targetTopRelativeToDiv);
         }
       }
     }, 300);
@@ -184,11 +173,12 @@ export function QuestionForm() {
   const addQuestionTemplate = (): void => {
     closeAllExpandedQuestion();
     let currentQuestions = [...questions];
-    currentQuestions.splice(currQueIdx + 1, 0, new Question());
+    let newQue = new Question();
+    currentQuestions.splice(currQueIdx + 1, 0, newQue);
     setQuestions(currentQuestions);
     setCurQueIdx(currQueIdx => currQueIdx + 1);
     setTimeout(() => {
-      updateToolBoxPosition(currQueIdx, true); // Call updateToolBoxPosition after a brief delay
+      updateToolBoxPosition(newQue._id);
     }, 0);
     toast.success('Question added', {
       position: "bottom-right"
@@ -207,17 +197,13 @@ export function QuestionForm() {
     currentQuestions.splice(questionIndex, 1);
     inputRefs.current.splice(questionIndex, 1);
 
-    if (questionIndex >= 1) {
-      currentQuestions[questionIndex - 1].openAndCloseQuestion(true);
-      updateToolBoxPosition(questionIndex - 1);
-      setCurQueIdx(currQueIdx => currQueIdx - 1);
-    } else if (questionIndex == 0 && currentQuestions.length > 0) {
-      currentQuestions[questionIndex].openAndCloseQuestion(true);
-      updateToolBoxPosition(questionIndex);
-      setCurQueIdx(currQueIdx => questionIndex == 0 ? questionIndex : currQueIdx - 1);
+    let index = questionIndex - 1 > 0 ? questionIndex - 1 : 0;
+    if (currentQuestions.length > 0) {
+      setCurQueIdx(index);
+      currentQuestions[index].openAndCloseQuestion(true);
+      updateToolBoxPosition(questions[index]._id);
     } else {
-      setCurQueIdx(0);
-      updateToolBoxPosition(questionIndex);
+      setYOffset(0);
     }
     setQuestions(() => [...currentQuestions]);
     toast.success('Question deleted', {
@@ -238,7 +224,7 @@ export function QuestionForm() {
     let copiedQuestion = currentQuestions[questionIndex].copyQuestion();
     currentQuestions.splice(questionIndex + 1, 0, copiedQuestion);
     setQuestions(currentQuestions);
-    updateToolBoxPosition(questionIndex + 1);
+    updateToolBoxPosition(copiedQuestion._id);
     toast.success('Question copied', {
       position: "bottom-right"
     })
@@ -254,7 +240,7 @@ export function QuestionForm() {
     return questions.map((question: Question, i: any) => {
       return <Draggable key={question._id} draggableId={question._id} index={i} isDragDisabled={questionPaper.showQuestionPaper}>
         {(provided) => (
-          <div ref={provided.innerRef}  {...provided.draggableProps} {...provided.dragHandleProps}>
+          <div id={question._id} ref={provided.innerRef}  {...provided.draggableProps} {...provided.dragHandleProps}>
             <div>
               <div className={questionPaper.showQuestionPaper ? " question-container add-margin" : "question-container"}>
                 {
@@ -267,7 +253,7 @@ export function QuestionForm() {
                 <Accordion onChange={(event) => {
                   if (!questionPaper.showQuestionPaper) {
                     handleExpand(i);
-                    updateToolBoxPosition(i);
+                    updateToolBoxPosition(question._id);
                   }
                 }} expanded={questions[i].open} className={questions[i].open ? "MuiAccordion-root add-border" : "MuiAccordion-root"}>
                   <AccordionSummary aria-controls="panel1-content" id="panel1-header">
@@ -316,7 +302,7 @@ export function QuestionForm() {
             <div className="question-form-top">
               <input
                 type="text"
-                className="question-form-top-name MuiAccordion-root"
+                className="question-form-top-name"
                 placeholder="Untitled form"
                 value={documentName}
                 onChange={(e) => {
@@ -355,7 +341,7 @@ export function QuestionForm() {
           }
 
           {
-            !!questions.length && <div className="save-form">
+            <div className="save-form">
               <Button
                 variant="contained"
                 color="primary"

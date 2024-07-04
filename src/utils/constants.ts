@@ -35,7 +35,7 @@ export enum QUESTION_TYPES {
 }
 
 export enum ROUTE_PATHS {
-  HOME = '/home',
+  HOME = '/',
   LOGIN = '/login',
   QUESTION_PAPER = '/question-paper/:documentId'
 }
