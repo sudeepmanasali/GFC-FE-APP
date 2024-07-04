@@ -4,9 +4,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 **Project Live** : https://gf-clone-c266a.web.app/
 
-# **Username:** admin@gmail.com
-
-# **Password:** password
+**Username:** admin@gmail.com
+**Password:** password
 
 ## Available Scripts
 
