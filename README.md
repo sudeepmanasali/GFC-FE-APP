@@ -3,11 +3,12 @@
 ## Tech stack;
 
 **Frontend** : ReactJS, Typescript
+
 **UI Framework** : Material UI
+
 **Notification library** : react-hot-toast
 
-**Backend **: NodeJS, Express and Typescript
-JSON webtoken to handle user sessions
+**Backend**: NodeJS, Express and Typescript
 
 **Database** : MongoDB (NoSql)
 
@@ -36,6 +37,7 @@ JSON webtoken to handle user sessions
 **Project Live** : https://gf-clone-c266a.web.app/
 
 **Username:** admin@gmail.com
+
 **Password:** password
 
 ## Available Scripts
