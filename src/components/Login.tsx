@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HTTP_METHODS, REQUEST_URLS, ROUTE_PATHS, SESSION_STORAGE_KEYS, UserLogin, UserRegister } from "../utils/constants";
 import { getCurrentDateTime, validateEmail } from "../utils/util";
@@ -12,7 +12,7 @@ function Login() {
   let [register, setRegister] = useState<UserRegister>({});
   let [login, setLogin] = useState<UserLogin>({});
   const navigate = useNavigate();
-  const HttpRequestController = useAxios();
+  const { HttpRequestController, isRequestPending } = useAxios();
   const { handleLogin } = useAuth();
 
   const sendLoginRequest = async () => {
@@ -127,7 +127,7 @@ function Login() {
                 placeholder="Password"
               />
             </div>
-            <button onClick={handleRegister}>Sign Up</button>
+            <button onClick={handleRegister} disabled={isRequestPending}>Sign Up</button>
             <div onClick={(e) => { setIsLogin(!isLogin); }} className="text-button">
               Sign In
             </div>
@@ -161,7 +161,7 @@ function Login() {
                 placeholder="Password"
               />
             </div>
-            <button onClick={handleLoginFunction}>Sign In</button>
+            <button onClick={handleLoginFunction} disabled={isRequestPending}>Sign In</button>
             <div onClick={(e) => {
               setIsLogin(!isLogin);
             }}

@@ -26,7 +26,7 @@ export function QuestionForm() {
   const [yoffset, setYOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   let params = useParams();
-  let HttpRequestController = useAxios();
+  let { HttpRequestController, isRequestPending } = useAxios();
   let { questions, dispatch, currentFocusedQuestionId, documentName, documentDescription, viewDocument
   } = useDocument();
 
@@ -239,6 +239,7 @@ export function QuestionForm() {
             <Button
               variant="contained"
               color="primary"
+              disabled={isRequestPending}
               onClick={!viewDocument ? updateDocument : () => { }} >
               {viewDocument ? "Submit" : "Save"}
             </Button>

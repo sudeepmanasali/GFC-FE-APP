@@ -62,7 +62,7 @@ const useAxios = () => {
     }
   };
 
-  return HttpRequestController;
+  return { HttpRequestController, isRequestPending };
 };
 
 export default useAxios;

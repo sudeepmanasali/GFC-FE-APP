@@ -19,7 +19,7 @@ import ProfileButton from "components/common/Dropdown";
 import { useDocument } from "components/contexts/questions-context";
 
 function FormHeader() {
-  const HttpRequestController = useAxios();
+  const { HttpRequestController, isRequestPending } = useAxios();
   const { viewDocument, documentName, dispatch } = useDocument();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -83,6 +83,7 @@ function FormHeader() {
                   </Button>
                   <Button
                     variant="contained"
+                    disabled={isRequestPending}
                     onClick={deleteDocument}
                   >
                     Delete

@@ -11,7 +11,7 @@ import { compareDesc, parseISO } from "date-fns";
 
 export const Mainbody = () => {
   const [type, setType] = useState(FOLDER_VIEW_TYPE.FILE);
-  const HttpRequestController = useAxios();
+  const { HttpRequestController } = useAxios();
   const [files, setFiles] = useState([]);
   const { user } = getUserInfo();
 

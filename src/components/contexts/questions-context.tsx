@@ -200,7 +200,7 @@ function reducer(state: any, action: any) {
 
 const DocumentContextProvider: React.FC<any> = ({ children }) => {
   let params = useParams();
-  let HttpRequestController = useAxios();
+  let { HttpRequestController } = useAxios();
   const [
     { questions, documentName, documentDescription, currQueIndex, currentFocusedQuestionId, viewDocument }, dispatch
   ] = useReducer(reducer, initialState);

@@ -9,13 +9,28 @@ import { HTTP_METHODS, REQUEST_URLS } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
 import { getCurrentDateTime } from "../../utils/util";
 import getUserInfo from "../../utils/auth-validate";
+import toast from "react-hot-toast";
 
 export function Templates() {
-  let HttpRequestController = useAxios();
+  let { HttpRequestController, isRequestPending } = useAxios();
   let navigate = useNavigate();
   let { user } = getUserInfo();
 
-  const createform = async (e: any): Promise<void> => {
+  const sendRequestToCreateForm = async (defaultQuestions: any): Promise<void> => {
+    let res = await HttpRequestController(REQUEST_URLS.CREATE_NEW_DOCUMENT, HTTP_METHODS.POST, {
+      documentName: "untitled-form",
+      documentDescription: "Add Description",
+      questions: defaultQuestions,
+      createdOn: getCurrentDateTime(),
+      createdBy: user.username,
+      updatedOn: getCurrentDateTime(),
+    });
+    if (res) {
+      navigate(`/question-paper/${res?.documentId}`);
+    }
+  }
+
+  const createform = (e: any): void => {
     e.preventDefault();
     let defaultQuestions = [
       {
@@ -29,17 +44,14 @@ export function Templates() {
       },
     ];
 
-    let res = await HttpRequestController(REQUEST_URLS.CREATE_NEW_DOCUMENT, HTTP_METHODS.POST, {
-      documentName: "untitled-form",
-      documentDescription: "Add Description",
-      questions: defaultQuestions,
-      createdOn: getCurrentDateTime(),
-      createdBy: user.username,
-      updatedOn: getCurrentDateTime(),
-    });
-    if (res) {
-      navigate(`/question-paper/${res?.documentId}`);
-    }
+    toast.promise(
+      sendRequestToCreateForm(defaultQuestions),
+      {
+        loading: 'Request in progress',
+        success: 'Document created successfully',
+        error: 'Document creation failed, Please try again'
+      }
+    );
   }
   return (
     <div className="template-section">
@@ -59,7 +71,7 @@ export function Templates() {
           </div>
         </div>
         <div className="template-body">
-          <div className="card" onClick={createform}>
+          <div className="card" onClick={!isRequestPending ? createform : () => { }}>
             <img src={blank} className="card-image" />
             <p className="title">Blank Form</p>
           </div>
