@@ -8,7 +8,7 @@ const useAxios = () => {
   type errorType = AxiosError | any;
   const [isRequestPending, setIsRequestPending] = useState(false);
   const HttpRequestController = async (path: string, method = HTTP_METHODS.GET, payload: any = null) => {
-    let url = 'http://localhost:9000' + path;
+    let url = 'https://gfc-be-app.onrender.com' + path;
     let headers = {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem(SESSION_STORAGE_KEYS.TOKEN)
