@@ -54,7 +54,7 @@ export const OptionBox: React.FC<PropsType> = ({ questionIndex, question }) => {
                 className="question-text-input"
                 type={question.questionType}
               />
-              <input type="text" className="text-input" placeholder="option"
+              <input type="text" className="text-input" placeholder="option" value={option.option}
                 onChange={(e) => {
                   handleOptionValue(e.target.value, questionIndex, j);
                 }}

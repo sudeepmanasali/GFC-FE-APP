@@ -124,7 +124,6 @@ export function QuestionForm() {
       type: QUESTION_ACTION_TYPES.EXPAND_QUESTION,
       payload: { questionIndex }
     });
-    console.log(questionIndex)
   }
 
   const updateQuestion = (question: string, questionIndex: number): void => {
