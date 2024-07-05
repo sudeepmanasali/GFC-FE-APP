@@ -1,12 +1,10 @@
-
-
 import { Paper, Tab, Tabs } from '@mui/material';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { a11yProps } from '../../utils/util';
 import "./Alert.scss";
 import { QuestionForm } from '../ConfigureQuestionPaper/QuestionUI';
-import { useQuestionPaper } from '../contexts/questionPaperContext';
+import { useDocument } from 'components/contexts/questions-context';
 
 function TabPanel(props: any) {
   const { children, value, index, ...other } = props;
@@ -26,7 +24,7 @@ TabPanel.propTypes = {
 
 export default function CenteredTabs() {
   const [value, setValue] = React.useState(0);
-  const { questionPaper } = useQuestionPaper();
+  const { viewDocument } = useDocument();
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
@@ -35,7 +33,7 @@ export default function CenteredTabs() {
   return (
     <>
       {
-        !questionPaper.showQuestionPaper && (<Paper className="root">
+        !viewDocument && (<Paper className="root">
           <Tabs value={value} onChange={handleChange} indicatorColor="primary"
             textColor="primary" centered className="tabs">
             <Tab label="Questions" className="tab" {...a11yProps(0)} />
@@ -52,8 +50,10 @@ export default function CenteredTabs() {
         </Paper>)
       }
 
+      {/* when user is viewing the question paper, the tab panels will noe be displayed so we will
+      display below compoent here */}
       {
-        questionPaper.showQuestionPaper && (<QuestionForm />)
+        viewDocument && (<QuestionForm />)
       }
     </>
   )

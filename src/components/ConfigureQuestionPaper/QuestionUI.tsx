@@ -7,51 +7,38 @@ import TextFieldsIcon from '@mui/icons-material/TextFields';
 import { Accordion, Button, Tooltip } from "@mui/material";
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { Question } from "../../utils/Question";
 import useAxios from '../../utils/axios';
-import { HTTP_METHODS, REQUEST_URLS } from "../../utils/constants";
+import { HTTP_METHODS, QUESTION_ACTION_TYPES, REQUEST_URLS } from "../../utils/constants";
 import { getCurrentDateTime } from '../../utils/util';
-import { useQuestionPaper } from '../contexts/questionPaperContext';
 import { DisplayQuestion } from './Displayquestion';
 import { OptionBox } from './OptionBox';
 import { QuestionBoxFooter } from './QuestionBoxFooter';
 import "./QuestionUI.scss";
 import { SelectBox } from './SelectBox';
+import { useDocument } from 'components/contexts/questions-context';
 
 export function QuestionForm() {
-  const { questionPaper, setQuestionPaper } = useQuestionPaper();
-  const [questions, setQuestions] = useState<Question[]>([]);
   const [yoffset, setYOffset] = useState(0);
-  const [currQueIdx, setCurQueIdx] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [documentName, setDocName] = useState("untitled Document");
-  const [documentDescription, setDocDesc] = useState("Add Description");
-  const inputRefs = useRef<HTMLInputElement[] | any>([]);
-  const divRef = useRef<HTMLInputElement[] | any>(null);
   let params = useParams();
   let HttpRequestController = useAxios();
+  let { questions, dispatch, currentFocusedQuestionId, documentName, documentDescription, viewDocument
+  } = useDocument();
 
   useEffect(() => {
-    setLoading(true);
-    toast.promise(
-      getAllQuestions(),
-      {
-        loading: 'loading...',
-        success: 'Questions loaded successfully',
-        error: 'Internal Server Error'
-      }
-    );
-  }, []);
-
-  useEffect(() => {
-    if (questionPaper.showQuestionPaper) {
+    if (viewDocument) {
       closeAllExpandedQuestion();
     }
-  }, [questionPaper]);
+  }, [viewDocument]);
+
+  useEffect(() => {
+    updateToolBoxPosition();
+  }, [currentFocusedQuestionId, questions]);
 
   const updateDocument = async (): Promise<void> => {
     let payload = {
@@ -65,25 +52,8 @@ export function QuestionForm() {
     toast.success("Questions saved successfully");
   }
 
-  const getAllQuestions = async (): Promise<void> => {
-    let { document } = await HttpRequestController(REQUEST_URLS.GET_DOCUMENT + `/${params.documentId}`, HTTP_METHODS.GET);
-    setDocDesc(document.documentDescription);
-    setDocName(document.documentName);
-    let documentQuestions = document.questions.map((question: Question) => {
-      question.open = false;
-      return new Question(question);
-    });
-    setQuestions(documentQuestions);
-    setQuestionPaper({
-      ...questionPaper,
-      documentName: document.documentName
-    });
-    setLoading(false);
-  }
-
-  const isElementBoxVisible = (id?: string): boolean => {
-    let questionId = id === undefined ? questions[currQueIdx]?._id : id;
-    let elementRect = document.getElementById(questionId)?.getBoundingClientRect() || { top: 0, bottom: 0 };
+  const isElementBoxVisible = (): boolean => {
+    let elementRect = document.getElementById(currentFocusedQuestionId)?.getBoundingClientRect() || { top: 0, bottom: 0 };
     let containerRect = document.getElementsByClassName('question-form')[0]?.getBoundingClientRect();
     return elementRect?.top >= containerRect?.top && elementRect.bottom <= containerRect.bottom;
   }
@@ -93,7 +63,7 @@ export function QuestionForm() {
     setTimeout(() => {
       const isVisible = isElementBoxVisible();
       if (isVisible) {
-        updateToolBoxPosition(questions[currQueIdx]._id);
+        updateToolBoxPosition();
       } else {
         setYOffset(event.target.scrollTop);
       }
@@ -101,13 +71,13 @@ export function QuestionForm() {
   };
 
   // updates tool box position when new question box is added
-  const updateToolBoxPosition = (questionId: string, bringIntoView = false): void => {
+  const updateToolBoxPosition = (): void => {
     setTimeout(() => {
-      if (!isElementBoxVisible(questionId) && bringIntoView) {
-        document.getElementById(questionId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      if (!isElementBoxVisible()) {
+        document.getElementById(currentFocusedQuestionId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }
-      if (isElementBoxVisible(questionId)) {
-        const accordionRect = document.getElementById(questionId)?.getBoundingClientRect();
+      if (isElementBoxVisible()) {
+        const accordionRect = document.getElementById(currentFocusedQuestionId)?.getBoundingClientRect();
         if (accordionRect) {
           const scrollTop = document.getElementsByClassName('question-form')[0].scrollTop;
           let targetTopRelativeToDiv = accordionRect.top - 120 + scrollTop;
@@ -127,7 +97,12 @@ export function QuestionForm() {
       result.source.index,
       result.destination.index
     );
-    setQuestions(itemF as Question[]);
+    dispatch({
+      type: QUESTION_ACTION_TYPES.REORDER_QUESTIONS,
+      payload: {
+        questions: itemF as Question[]
+      }
+    });
     toast.success('Questions swapped', {
       position: "bottom-right"
     });
@@ -141,128 +116,56 @@ export function QuestionForm() {
   };
 
   const closeAllExpandedQuestion = (): void => {
-    let expandedQuestion = questions.map((question: Question) => {
-      return question.openAndCloseQuestion(false);
-    });
-    setQuestions(expandedQuestion);
+    dispatch({ type: QUESTION_ACTION_TYPES.CLOSE_EXPANDED_QUESTIONS });
   }
 
   const handleExpand = (questionIndex: number): void => {
-    let expandedQuestion = questions.map((question: Question, j: number) => {
-      return question.openAndCloseQuestion(questionIndex == j);
+    dispatch({
+      type: QUESTION_ACTION_TYPES.EXPAND_QUESTION,
+      payload: { questionIndex }
     });
-    setQuestions(expandedQuestion);
-    setCurQueIdx(questionIndex);
+    console.log(questionIndex)
   }
 
   const updateQuestion = (question: string, questionIndex: number): void => {
-    let currentQuestions = [...questions];
-    currentQuestions[questionIndex].updateQuestion(question);
-    setQuestions(currentQuestions);
-  }
-
-  const addOption = (questionIndex: number): void => {
-    let currentQuestions = [...questions];
-    currentQuestions[questionIndex].addNewOption();
-    setQuestions(currentQuestions);
-  }
-
-  const removeOption = (questionIndex: number, optionIndex: number): void => {
-    let currentQuestions = [...questions];
-    currentQuestions[questionIndex].removeOption(optionIndex);
-    setQuestions(currentQuestions);
+    dispatch({
+      type: QUESTION_ACTION_TYPES.UPDATE_QUESTION,
+      payload: { questionIndex, questionText: question }
+    });
   }
 
   const addQuestionTemplate = (): void => {
     closeAllExpandedQuestion();
-    let currentQuestions = [...questions];
-    let newQue = new Question();
-    currentQuestions.splice(currQueIdx + 1, 0, newQue);
-    setQuestions(currentQuestions);
-    setCurQueIdx(currQueIdx => currQueIdx + 1);
-    setTimeout(() => {
-      updateToolBoxPosition(newQue._id, true);
-    }, 0);
+    dispatch({ type: QUESTION_ACTION_TYPES.ADD_NEW_QUESTION });
     toast.success('Question added', {
       position: "bottom-right"
-    })
+    });
   }
 
-  const updatedQuestionType = (questionIndex: number, type: any): void => {
-    let currentQuestions = [...questions];
-    currentQuestions[questionIndex].updateQuestionType(type);
-    setQuestions(currentQuestions);
-  }
-
-  const deleteQuestion = (questionIndex: number): void => {
-    closeAllExpandedQuestion();
-    let currentQuestions = [...questions];
-    currentQuestions.splice(questionIndex, 1);
-    inputRefs.current.splice(questionIndex, 1);
-
-    let index = questionIndex - 1 > 0 ? questionIndex - 1 : 0;
-    if (currentQuestions.length > 0) {
-      setCurQueIdx(index);
-      currentQuestions[index].openAndCloseQuestion(true);
-      updateToolBoxPosition(questions[index]._id);
-    } else {
-      setYOffset(0);
-    }
-    setQuestions(() => [...currentQuestions]);
-    toast.success('Question deleted', {
-      position: "bottom-right"
-    })
-  }
-
-  const handleOptionValue = (value: string, questionIndex: number, optionIndex: number): void => {
-    let currentQuestions = [...questions];
-    currentQuestions[questionIndex].updateOption(optionIndex, value);
-    setQuestions(currentQuestions);
-  }
-
-  const copyQuestion = (questionIndex: number): void => {
-    closeAllExpandedQuestion();
-    setCurQueIdx(questionIndex => questionIndex + 1);
-    let currentQuestions = [...questions];
-    let copiedQuestion = currentQuestions[questionIndex].copyQuestion();
-    currentQuestions.splice(questionIndex + 1, 0, copiedQuestion);
-    setQuestions(currentQuestions);
-    updateToolBoxPosition(copiedQuestion._id);
-    toast.success('Question copied', {
-      position: "bottom-right"
-    })
-  }
-
-  const requiredQuestion = (questionIndex: number): void => {
-    let currentQuestions = [...questions];
-    currentQuestions[questionIndex].updateRequiredType();
-    setQuestions(currentQuestions);
-  }
 
   const displayQuestions = () => {
     return questions.map((question: Question, i: any) => {
-      return <Draggable key={question._id} draggableId={question._id} index={i} isDragDisabled={questionPaper.showQuestionPaper}>
+      return <Draggable key={question._id} draggableId={question._id} index={i} isDragDisabled={viewDocument}>
         {(provided) => (
           <div id={question._id} ref={provided.innerRef}  {...provided.draggableProps} {...provided.dragHandleProps}>
             <div>
-              <div className={questionPaper.showQuestionPaper ? " question-container add-margin" : "question-container"}>
+              <div className={viewDocument ? "question-container add-margin" : "question-container"}>
                 {
-                  !questionPaper.showQuestionPaper && (
+                  !viewDocument && (
                     <div className="drag-indicator-box">
                       <DragIndicatorIcon className="icon" fontSize="small" />
                     </div>
                   )
                 }
-                <Accordion onChange={(event) => {
-                  if (!questionPaper.showQuestionPaper) {
+                <Accordion onChange={() => {
+                  if (!viewDocument) {
                     handleExpand(i);
-                    updateToolBoxPosition(question._id, true);
                   }
                 }} expanded={questions[i].open} className={questions[i].open ? "MuiAccordion-root add-border" : "MuiAccordion-root"}>
                   <AccordionSummary aria-controls="panel1-content" id="panel1-header">
                     {(!questions[i].open) && (
                       <DisplayQuestion questionIndex={i} question={question}
-                        showQuestionPaper={questionPaper.showQuestionPaper} />
+                        showQuestionPaper={viewDocument} />
                     )}
                   </AccordionSummary>
                   <div className="question-box">
@@ -270,20 +173,14 @@ export function QuestionForm() {
                       <div>
                         <div className="add-question-top">
                           <textarea className="question"
-                            ref={(e) => { inputRefs.current[i] = e }}
                             placeholder="Question" value={question.question} onChange={(e) => { updateQuestion(e.target.value, i) }} />
-
                           {/* selection box to select question type  */}
-                          <SelectBox questionIndex={i} updatedQuestionType={updatedQuestionType} question={question} />
+                          <SelectBox questionIndex={i} question={question} />
                         </div>
-
                         {/* adding options */}
-                        <OptionBox question={question} questionIndex={i}
-                          addOption={addOption} removeOption={removeOption} handleOptionValue={handleOptionValue} />
-
+                        <OptionBox question={question} questionIndex={i} />
                         {/* question box footer with action buttons  */}
-                        <QuestionBoxFooter isRequired={question.required} questionIndex={i} copyQuestion={copyQuestion}
-                          deleteQuestion={deleteQuestion} requiredQuestion={requiredQuestion} />
+                        <QuestionBoxFooter isRequired={question.required} questionIndex={i} />
                       </div>
                     </AccordionDetails>
                   </div>
@@ -299,7 +196,7 @@ export function QuestionForm() {
 
   return (
     <div>
-      <div className={questionPaper.showQuestionPaper ? "question-paper-full-height question-form" : "question-form"} id="question-form" onScroll={handleScroll}>
+      <div className={viewDocument ? "question-paper-full-height question-form" : "question-form"} id="question-form" onScroll={handleScroll}>
         <div className="section">
           <div className="question-title-section">
             <div className="question-form-top">
@@ -309,13 +206,9 @@ export function QuestionForm() {
                 placeholder="Untitled form"
                 value={documentName}
                 onChange={(e) => {
-                  setDocName(e.target.value);
-                  setQuestionPaper({
-                    ...questionPaper,
-                    documentName: e.target.value
-                  });
+                  dispatch({ type: QUESTION_ACTION_TYPES.UPDATE_DOCUMENT_NAME, payload: { documentName: e.target.value } });
                 }}
-                readOnly={questionPaper.showQuestionPaper}
+                readOnly={viewDocument}
               />
               <input
                 type="text"
@@ -323,9 +216,9 @@ export function QuestionForm() {
                 placeholder="Document description"
                 value={documentDescription}
                 onChange={(e) => {
-                  setDocDesc(e.target.value);
+                  dispatch({ type: QUESTION_ACTION_TYPES.UPDATE_DOCUMENT_DESCRIPTION, payload: { documentDescription: e.target.value } });
                 }}
-                readOnly={questionPaper.showQuestionPaper}
+                readOnly={viewDocument}
               />
             </div>
           </div>
@@ -343,19 +236,17 @@ export function QuestionForm() {
             )
           }
 
-          {
-            <div className="save-form">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={!questionPaper.showQuestionPaper ? updateDocument : () => { }} >
-                {questionPaper.showQuestionPaper ? "Submit" : "Save"}
-              </Button>
-            </div>
-          }
+          <div className="save-form">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={!viewDocument ? updateDocument : () => { }} >
+              {viewDocument ? "Submit" : "Save"}
+            </Button>
+          </div>
         </div>
         {
-          !loading && !questionPaper.showQuestionPaper && (<div className="question-edit" style={{ top: `${yoffset}px` }} ref={divRef}>
+          !loading && !viewDocument && (<div className="question-edit" style={{ top: `${yoffset}px` }}>
             <Tooltip title="Add question" placement="right">
               <AddCircleOutlineIcon className="edit" onClick={() => addQuestionTemplate()} />
             </Tooltip>
@@ -365,12 +256,12 @@ export function QuestionForm() {
           </div>)
         }
       </div>
-      {questionPaper.showQuestionPaper && (
+      {/* display this edit icon when user is viewing the document */}
+      {viewDocument && (
         <Tooltip title="Edit">
-          <CreateIcon className="edit-question-paper-icon" onClick={() => (setQuestionPaper({
-            ...questionPaper,
-            showQuestionPaper: !questionPaper.showQuestionPaper
-          }))} />
+          <CreateIcon className="edit-question-paper-icon" onClick={() => dispatch({
+            type: QUESTION_ACTION_TYPES.VIEW_DOCUMENT
+          })} />
         </Tooltip>)
       }
     </div >

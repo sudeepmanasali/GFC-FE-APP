@@ -9,34 +9,26 @@ import { Button, IconButton, Modal, Tooltip } from "@mui/material";
 import "./FormHeader.scss";
 import ColorLensIcon from '@mui/icons-material/ColorLens';
 import AlertDialog from "../common/Alert";
-import { useTheme } from "../contexts/themeContext";
-import { useQuestionPaper } from "../contexts/questionPaperContext";
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import { useNavigate, useParams } from "react-router-dom";
-import { HTTP_METHODS, REQUEST_URLS, ROUTE_PATHS } from "../../utils/constants";
+import { HTTP_METHODS, QUESTION_ACTION_TYPES, REQUEST_URLS, ROUTE_PATHS } from "../../utils/constants";
 import toast from "react-hot-toast";
 import useAxios from "utils/axios";
 import ProfileButton from "components/common/Dropdown";
-
+import { useDocument } from "components/contexts/questions-context";
 
 function FormHeader() {
   const HttpRequestController = useAxios();
-  const { theme, setTheme } = useTheme();
-  const { questionPaper, setQuestionPaper } = useQuestionPaper();
-  const user = {
-    email: 'sudeepmanasali@gmail.com',
-    name: 'sudeep'
-  }
+  const { viewDocument, documentName, dispatch } = useDocument();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   let params = useParams();
 
   const openQuestionPaper = () => {
-    setQuestionPaper({
-      ...questionPaper,
-      showQuestionPaper: !questionPaper.showQuestionPaper
-    });
+    dispatch({
+      type: QUESTION_ACTION_TYPES.VIEW_DOCUMENT
+    })
   }
 
   const handleOpen = () => {
@@ -71,7 +63,7 @@ function FormHeader() {
   return (
     <React.Fragment>
       {
-        !questionPaper.showQuestionPaper && (<>
+        !viewDocument && (<>
           <div>
             <Modal
               open={open}
@@ -110,7 +102,7 @@ function FormHeader() {
                 type="text"
                 placeholder="Untitled form"
                 className="form-name"
-                value={questionPaper.documentName} />
+                value={documentName} />
               <IconButton><FolderOpenIcon className="form-header-icon" ></FolderOpenIcon></IconButton>
               <IconButton><StarBorderIcon className="form-header-icon" /></IconButton>
             </div>

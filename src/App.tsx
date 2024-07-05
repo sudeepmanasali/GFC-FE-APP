@@ -9,9 +9,9 @@ import FormHeader from './components/ConfigureQuestionPaper/FormHEader';
 import CenteredTabs from './components/common/Tabs';
 import { ROUTE_PATHS } from './utils/constants';
 import { ThemeProvider } from './components/contexts/themeContext';
-import { QuestionPaperProvider } from './components/contexts/questionPaperContext';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from 'components/contexts/auth-context';
+import { DocumentContextProvider } from 'components/contexts/questions-context';
 
 function App() {
   let { isLoggedIn } = useAuth();
@@ -36,12 +36,12 @@ function App() {
           )}
           />
           <Route path={ROUTE_PATHS.QUESTION_PAPER} element={isLoggedIn ? (
-            <QuestionPaperProvider>
+            <DocumentContextProvider>
               <ThemeProvider>
                 <FormHeader />
                 <CenteredTabs />
               </ThemeProvider>
-            </QuestionPaperProvider>
+            </DocumentContextProvider>
           ) : (
             <Navigate to={ROUTE_PATHS.LOGIN} replace />
           )}

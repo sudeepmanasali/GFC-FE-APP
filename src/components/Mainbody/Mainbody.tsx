@@ -41,18 +41,10 @@ export const Mainbody = () => {
       </div>
 
       <div className="header-right">
-        <IconButton
-          onClick={() => {
-            setType(FOLDER_VIEW_TYPE.ROWS);
-          }}
-        >
+        <IconButton onClick={() => { setType(FOLDER_VIEW_TYPE.ROWS); }}>
           <StorageSharpIcon style={{ fontSize: "16px", color: "black" }} />
         </IconButton>
-        <IconButton
-          onClick={() => {
-            setType(FOLDER_VIEW_TYPE.FILE);
-          }}
-        >
+        <IconButton onClick={() => { setType(FOLDER_VIEW_TYPE.FILE); }}>
           <FolderOpenSharpIcon style={{ fontSize: "16px", color: "black" }} />
         </IconButton>
       </div>

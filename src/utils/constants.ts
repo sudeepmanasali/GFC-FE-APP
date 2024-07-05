@@ -58,6 +58,25 @@ export enum PROFILE_ACTION_MENUS {
   LOGOUT = 'Logout'
 }
 
+export enum QUESTION_ACTION_TYPES {
+  DOCUMENT_LOADED = 'DOCUMENT_LOADED',
+  CLOSE_EXPANDED_QUESTIONS = 'CLOSE_EXPANDED_QUESTIONS',
+  EXPAND_QUESTION = 'EXPAND_QUESTION',
+  UPDATE_QUESTION = 'UPDATE_QUESTION',
+  ADD_NEW_OPTION = 'ADD_NEW_OPTION',
+  REMOVE_OPTION = 'REMOVE_OPTION',
+  ADD_NEW_QUESTION = 'ADD_NEW_QUESTION',
+  UPDATE_QUESTION_TYPE = 'UPDATE_QUESTION_TYPE',
+  DELETE_QUESTION = 'DELETE_QUESTION',
+  COPY_QUESTION = 'COPY_QUESTION',
+  TOGGLE_REQUIRED = 'TOGGLE_REQUIRED',
+  HANDLE_OPTION_VALUE = 'HANDLE_OPTION_VALUE',
+  UPDATE_DOCUMENT_NAME = 'UPDATE_DOCUMENT_NAME',
+  UPDATE_DOCUMENT_DESCRIPTION = 'UPDATE_DOCUMENT_DESCRIPTION',
+  REORDER_QUESTIONS = 'REORDER_QUESTIONS',
+  VIEW_DOCUMENT = 'VIEW_DOCUMENT'
+}
+
 // interfaces
 export interface ActionPayload {
   type: ACTION_TYPES,
@@ -76,10 +95,13 @@ export interface Question {
   required?: boolean
 }
 
-export interface AppState {
+export interface DocumentInitialState {
   questions: Question[],
-  doc_name: string,
-  doc_desc: string
+  documentName: string,
+  documentDescription: string,
+  currQueIndex: number,
+  currentFocusedQuestionId: string,
+  viewDocument: boolean
 }
 
 export interface UserRegister {
@@ -118,7 +140,14 @@ export interface QuestionPaper {
   showQuestionPaper: boolean,
   documentName: string
 }
+
 export interface QuestionPaperContextType {
   questionPaper: QuestionPaper;
   setQuestionPaper: React.Dispatch<React.SetStateAction<QuestionPaper>>;
+}
+
+export interface UndoRedoOperationItem {
+  optionIndex?: number,
+  questionIndex?: number,
+  actionType?: QUESTION_ACTION_TYPES
 }

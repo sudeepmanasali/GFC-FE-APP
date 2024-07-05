@@ -4,16 +4,52 @@ import { IconButton, Switch, Tooltip } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useDocument } from "components/contexts/questions-context";
+import { QUESTION_ACTION_TYPES } from "utils/constants";
+import toast from "react-hot-toast";
 
 interface PropsType {
   questionIndex: number,
-  copyQuestion: Function,
-  isRequired: boolean,
-  deleteQuestion: Function,
-  requiredQuestion: Function
+  isRequired: boolean
 };
 
-export const QuestionBoxFooter: React.FC<PropsType> = ({ questionIndex, isRequired, copyQuestion, deleteQuestion, requiredQuestion }) => {
+export const QuestionBoxFooter: React.FC<PropsType> = ({ questionIndex, isRequired }) => {
+
+  let { dispatch } = useDocument();
+  const copyQuestion = (questionIndex: number): void => {
+    dispatch({
+      type: QUESTION_ACTION_TYPES.CLOSE_EXPANDED_QUESTIONS
+    });
+    dispatch({
+      type: QUESTION_ACTION_TYPES.COPY_QUESTION,
+      payload: { questionIndex }
+    });
+    toast.success('Question copied', {
+      position: "bottom-right"
+    });
+  }
+
+  const requiredQuestion = (questionIndex: number): void => {
+    dispatch({
+      type: QUESTION_ACTION_TYPES.TOGGLE_REQUIRED,
+      payload: { questionIndex }
+    });
+  }
+
+  const deleteQuestion = (questionIndex: number): void => {
+    dispatch({
+      type: QUESTION_ACTION_TYPES.CLOSE_EXPANDED_QUESTIONS
+    });
+    dispatch({
+      type: QUESTION_ACTION_TYPES.DELETE_QUESTION,
+      payload: { questionIndex }
+    });
+    toast.success('Question deleted', {
+      position: "bottom-right"
+    });
+  }
+
+
   return <div className="question-footer">
     <div className="question-bottom">
       <Tooltip title="Duplicate" placement="bottom">

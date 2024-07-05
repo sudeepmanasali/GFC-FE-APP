@@ -1,26 +1,46 @@
 import { Question } from "../../utils/Question";
 import { Tooltip, IconButton, Button } from "@mui/material";
-import { QUESTION_TYPES } from "../../utils/constants";
+import { QUESTION_ACTION_TYPES, QUESTION_TYPES } from "../../utils/constants";
 import CropOriginalIcon from '@mui/icons-material/CropOriginal';
 import CloseIcon from '@mui/icons-material/Close';
 import React from "react";
 import "./QuestionUI.scss";
 import { isSelectionType } from "../../utils/util";
+import { useDocument } from "components/contexts/questions-context";
 
 interface PropsType {
   questionIndex: number,
-  question: Question,
-  addOption: Function,
-  handleOptionValue: Function,
-  removeOption: Function
+  question: Question
 };
 
-export const OptionBox: React.FC<PropsType> = ({ questionIndex, question, handleOptionValue, addOption, removeOption }) => {
+export const OptionBox: React.FC<PropsType> = ({ questionIndex, question }) => {
 
+  let { dispatch } = useDocument();
   let IconMap = new Map();
   IconMap.set(QUESTION_TYPES.TEXT, "Short text answer");
   IconMap.set(QUESTION_TYPES.DATE, "DD/MM/YYYY");
   IconMap.set(QUESTION_TYPES.TIME, "HH:SS");
+
+  const addOption = (questionIndex: number): void => {
+    dispatch({
+      type: QUESTION_ACTION_TYPES.ADD_NEW_OPTION,
+      payload: { questionIndex }
+    });
+  }
+
+  const removeOption = (questionIndex: number, optionIndex: number): void => {
+    dispatch({
+      type: QUESTION_ACTION_TYPES.REMOVE_OPTION,
+      payload: { questionIndex, optionIndex }
+    });
+  }
+
+  const handleOptionValue = (optionValue: string, questionIndex: number, optionIndex: number): void => {
+    dispatch({
+      type: QUESTION_ACTION_TYPES.HANDLE_OPTION_VALUE,
+      payload: { questionIndex, optionIndex, optionValue }
+    });
+  }
 
   return <>
     {isSelectionType(question.questionType) && question?.options.length > 0 &&
