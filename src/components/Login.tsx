@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HTTP_METHODS, REQUEST_URLS, ROUTE_PATHS, SESSION_STORAGE_KEYS, UserLogin, UserRegister } from "../utils/constants";
-import { validateEmail } from "../utils/util";
+import { getCurrentDateTime, validateEmail } from "../utils/util";
 import "./Login.scss";
 import useAxios from "../utils/axios";
 import toast from "react-hot-toast";
@@ -30,7 +30,8 @@ function Login() {
   }
 
   const sendRegisterRequest = async () => {
-    const res = await HttpRequestController(REQUEST_URLS.REGISTER, HTTP_METHODS.POST, register);
+    let payload = { ...register, createdOn: getCurrentDateTime() }
+    const res = await HttpRequestController(REQUEST_URLS.REGISTER, HTTP_METHODS.POST, payload);
     if (res) {
       setIsLogin(true);
       setRegister({});
