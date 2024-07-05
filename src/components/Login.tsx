@@ -29,6 +29,14 @@ function Login() {
     }
   }
 
+  const sendRegisterRequest = async () => {
+    const res = await HttpRequestController(REQUEST_URLS.REGISTER, HTTP_METHODS.POST, register);
+    if (res) {
+      setIsLogin(true);
+      setRegister({});
+    }
+  }
+
   const handleLoginFunction = async () => {
     if (login.email && login.password && validateEmail(login.email)) {
       toast.promise(
@@ -47,10 +55,14 @@ function Login() {
   const handleRegister = async () => {
     if (register.username && register.username.trim().length != 0 && register.password && register.email
       && validateEmail(register.email) && register.phone && register.phone.length == 10) {
-      await HttpRequestController(REQUEST_URLS.REGISTER, HTTP_METHODS.POST, register);
-      setIsLogin(true);
-      setRegister({});
-      toast.success("User registered successfully");
+      toast.promise(
+        sendRegisterRequest(),
+        {
+          loading: 'Request in progress',
+          success: 'Registered successfully',
+          error: 'Registration Failed, Please try again'
+        }
+      );
     } else {
       toast.error("Please enter all valid details");
     }
