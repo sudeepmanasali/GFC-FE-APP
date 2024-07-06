@@ -47,7 +47,7 @@ function App() {
           )}
           >
           </Route>
-          <Route path={ROUTE_PATHS.HOME} element={<Navigate to={ROUTE_PATHS.LOGIN} replace />}></Route>
+          <Route path={"*"} element={<Navigate to={ROUTE_PATHS.LOGIN} replace />}></Route>
         </Routes>
       </BrowserRouter >
       <Toaster />

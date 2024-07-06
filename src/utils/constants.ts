@@ -1,3 +1,5 @@
+import { Question as QueObject } from "./Question"
+
 // Files to define all the constants, enums and interfaces
 export enum FOLDER_VIEW_TYPE {
   FILE = 'File',
@@ -96,7 +98,7 @@ export interface Question {
 }
 
 export interface DocumentInitialState {
-  questions: Question[],
+  questions: QueObject[],
   documentName: string,
   documentDescription: string,
   currQueIndex: number,
