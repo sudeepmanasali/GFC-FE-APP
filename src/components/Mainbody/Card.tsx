@@ -8,7 +8,7 @@ import "./Mainbody.scss"
 export const Card: React.FC<any> = ({ document }) => {
   const navigate = useNavigate();
   const openForm = (documentId: string) => {
-    navigate(`/question-paper/${documentId}`);
+    navigate(`/forms/${documentId}`, { state: { edit: true } });
   }
 
   return <div className="doc-card" onClick={() => {

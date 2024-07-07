@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import form_image from "../../assets/images/forms-icon.png";
 import DeleteIcon from '@mui/icons-material/Delete';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
@@ -11,7 +11,7 @@ import ColorLensIcon from '@mui/icons-material/ColorLens';
 import AlertDialog from "../common/Alert";
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { HTTP_METHODS, QUESTION_ACTION_TYPES, REQUEST_URLS, ROUTE_PATHS } from "../../utils/constants";
 import toast from "react-hot-toast";
 import useAxios from "utils/axios";
@@ -24,11 +24,19 @@ function FormHeader() {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   let params = useParams();
+  const location = useLocation();
+  const isEditable = location.state?.edit || false;
+
+  useEffect(() => {
+    if (!isEditable) {
+      dispatch({ type: QUESTION_ACTION_TYPES.VIEW_DOCUMENT });
+    }
+  }, []);
 
   const openQuestionPaper = () => {
     dispatch({
       type: QUESTION_ACTION_TYPES.VIEW_DOCUMENT
-    })
+    });
   }
 
   const handleOpen = () => {
@@ -142,7 +150,7 @@ function FormHeader() {
                 </IconButton>
               </Tooltip>
 
-              <AlertDialog />
+              <AlertDialog url={`https://gf-clone-c266a.web.app${location.pathname}`} />
 
               <Tooltip title="More">
                 <IconButton>

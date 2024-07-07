@@ -5,6 +5,7 @@ import { a11yProps } from '../../utils/util';
 import "./Alert.scss";
 import { QuestionForm } from '../ConfigureQuestionPaper/QuestionUI';
 import { useDocument } from 'components/contexts/questions-context';
+import DataTable from 'components/userview/UserResponseTab';
 
 function TabPanel(props: any) {
   const { children, value, index, ...other } = props;
@@ -45,7 +46,10 @@ export default function CenteredTabs() {
           </TabPanel>
 
           <TabPanel value={value} index={1}>
-            <div>user form responses</div>
+            <div className="user-response-container">
+              <div className='header-title'>User Form Responses</div>
+              <DataTable />
+            </div>
           </TabPanel>
         </Paper>)
       }

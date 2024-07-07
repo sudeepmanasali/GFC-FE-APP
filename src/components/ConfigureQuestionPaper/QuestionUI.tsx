@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { Question } from "../../utils/Question";
 import useAxios from '../../utils/axios';
-import { HTTP_METHODS, QUESTION_ACTION_TYPES, REQUEST_URLS } from "../../utils/constants";
+import { Answers, HTTP_METHODS, QUESTION_ACTION_TYPES, QUESTION_TYPES, REQUEST_URLS } from "../../utils/constants";
 import { getCurrentDateTime } from '../../utils/util';
 import { DisplayQuestion } from './Displayquestion';
 import { OptionBox } from './OptionBox';
@@ -21,13 +21,15 @@ import { QuestionBoxFooter } from './QuestionBoxFooter';
 import "./QuestionUI.scss";
 import { SelectBox } from './SelectBox';
 import { useDocument } from 'components/contexts/questions-context';
+import getUserInfo from 'utils/auth-validate';
 
 export function QuestionForm() {
   const [yoffset, setYOffset] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [answers, setAnswers] = useState<Answers>();
+  let { user } = getUserInfo();
   let params = useParams();
   let { HttpRequestController, isRequestPending } = useAxios();
-  let { questions, dispatch, currentFocusedQuestionId, documentName, documentDescription, viewDocument
+  let { questions, dispatch, currentFocusedQuestionId, documentName, documentDescription, viewDocument, createdByUserID
   } = useDocument();
 
   useEffect(() => {
@@ -50,6 +52,49 @@ export function QuestionForm() {
     }
     await HttpRequestController(REQUEST_URLS.UPDATE_DOCUMENT, HTTP_METHODS.PUT, payload);
     toast.success("Questions saved successfully");
+  }
+
+  const handleValueChange = (question: Question, value: string, option?: string, checked?: boolean) => {
+    if (question.questionType != QUESTION_TYPES.CHECKBOX) {
+      setAnswers({ ...answers, [question._id]: value });
+    } else {
+      const selectedOptions = answers?.[question._id] ?? [];
+      if (checked) {
+        setAnswers({ ...answers, [question._id]: [...selectedOptions, option] });
+      } else {
+        const updatedOptions = selectedOptions.filter((selected: string) => selected !== option);
+        return {
+          ...answers,
+          [question._id]: updatedOptions
+        };
+      }
+    }
+  };
+
+  const checkAllRequiredQuestionsAreAnswered = (): boolean => {
+    return questions.every((question: Question) => {
+      if (question.required) {
+        return answers?.hasOwnProperty(question._id);
+      } else {
+        return true;
+      }
+    });
+  }
+
+  const submitUserResponse = async (): Promise<void> => {
+    if (checkAllRequiredQuestionsAreAnswered()) {
+      let payload = {
+        documentId: params.documentId,
+        documentName,
+        documentDescription,
+        answers,
+        submittedOn: getCurrentDateTime(),
+        username: user.username,
+        userId: user.userId
+      }
+      await HttpRequestController(`${REQUEST_URLS.USER_RESPONSE}/${params.documentId}`, HTTP_METHODS.POST, payload);
+      toast.success("Response saved successfully");
+    }
   }
 
   const isElementBoxVisible = (): boolean => {
@@ -164,7 +209,7 @@ export function QuestionForm() {
                   <AccordionSummary aria-controls="panel1-content" id="panel1-header">
                     {(!questions[i].open) && (
                       <DisplayQuestion questionIndex={i} question={question}
-                        showQuestionPaper={viewDocument} />
+                        showQuestionPaper={viewDocument} onChange={handleValueChange} />
                     )}
                   </AccordionSummary>
                   <div className="question-box">
@@ -240,13 +285,13 @@ export function QuestionForm() {
               variant="contained"
               color="primary"
               disabled={isRequestPending}
-              onClick={!viewDocument ? updateDocument : () => { }} >
+              onClick={!viewDocument ? updateDocument : submitUserResponse} >
               {viewDocument ? "Submit" : "Save"}
             </Button>
           </div>
         </div>
         {
-          !loading && !viewDocument && (<div className="question-edit" style={{ top: `${yoffset}px` }}>
+          !viewDocument && (<div className="question-edit" style={{ top: `${yoffset}px` }}>
             <Tooltip title="Add question" placement="right">
               <AddCircleOutlineIcon className="edit" onClick={() => addQuestionTemplate()} />
             </Tooltip>
@@ -257,7 +302,7 @@ export function QuestionForm() {
         }
       </div>
       {/* display this edit icon when user is viewing the document */}
-      {viewDocument && (
+      {user.userId === createdByUserID && viewDocument && (
         <Tooltip title="Edit">
           <CreateIcon className="edit-question-paper-icon" onClick={() => dispatch({
             type: QUESTION_ACTION_TYPES.VIEW_DOCUMENT

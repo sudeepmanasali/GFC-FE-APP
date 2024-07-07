@@ -39,7 +39,8 @@ export enum QUESTION_TYPES {
 export enum ROUTE_PATHS {
   HOME = '/',
   LOGIN = '/login',
-  QUESTION_PAPER = '/question-paper/:documentId'
+  QUESTION_PAPER = '/forms/:documentId',
+  USERVIEW = '/viewform/:documentId'
 }
 
 export enum UPDATE_QUESTION_STATE {
@@ -53,7 +54,8 @@ export enum REQUEST_URLS {
   GET_ALL_DOCUMENTS = '/documents',
   GET_DOCUMENT = '/document',
   DELETE_DOCUMENT = '/delete',
-  UPDATE_DOCUMENT = '/update-document'
+  UPDATE_DOCUMENT = '/update-document',
+  USER_RESPONSE = '/user-response'
 }
 
 export enum PROFILE_ACTION_MENUS {
@@ -103,7 +105,8 @@ export interface DocumentInitialState {
   documentDescription: string,
   currQueIndex: number,
   currentFocusedQuestionId: string,
-  viewDocument: boolean
+  viewDocument: boolean,
+  createdByUserID: string
 }
 
 export interface UserRegister {
@@ -152,4 +155,8 @@ export interface UndoRedoOperationItem {
   optionIndex?: number,
   questionIndex?: number,
   actionType?: QUESTION_ACTION_TYPES
+}
+
+export interface Answers {
+  [key: string]: any
 }

@@ -7,6 +7,8 @@ import React from "react";
 import "./QuestionUI.scss";
 import { isSelectionType } from "../../utils/util";
 import { useDocument } from "components/contexts/questions-context";
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 interface PropsType {
   questionIndex: number,
@@ -49,11 +51,12 @@ export const OptionBox: React.FC<PropsType> = ({ questionIndex, question }) => {
           {/* display if question type is selection type like radio / checkbox  */}
           {
             isSelectionType(question.questionType) && (<div className="option-box">
-              <input
-                readOnly
-                className="question-text-input"
-                type={question.questionType}
-              />
+              {
+                question.questionType === QUESTION_TYPES.RADIO && <RadioButtonUncheckedIcon fontSize="small" />
+              }
+              {
+                question.questionType === QUESTION_TYPES.CHECKBOX && <CheckBoxOutlineBlankIcon fontSize="small" />
+              }
               <input type="text" className="text-input" placeholder="option" value={option.option}
                 onChange={(e) => {
                   handleOptionValue(e.target.value, questionIndex, j);
@@ -89,10 +92,12 @@ export const OptionBox: React.FC<PropsType> = ({ questionIndex, question }) => {
     {question.options.length < 5 && isSelectionType(question.questionType) && (
       <div className="add-question-body">
         <div className="option-box">
-          <input readOnly
-            className="question_text_input"
-            type={question.questionType}
-          />
+          {
+            question.questionType === QUESTION_TYPES.RADIO && <RadioButtonUncheckedIcon fontSize="small" />
+          }
+          {
+            question.questionType === QUESTION_TYPES.CHECKBOX && <CheckBoxOutlineBlankIcon fontSize="small" />
+          }
           <Button size="small" onClick={() => { addOption(questionIndex); }} className="add-option-btn">
             Add Option
           </Button>

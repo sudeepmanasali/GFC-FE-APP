@@ -134,3 +134,22 @@
     height: 10;
   }
 }
+
+.user-response-container {
+  width: 40%;
+  margin: 0 auto;
+
+  .header-title {
+    color: $textColor;
+    font-size: $lg;
+    margin: $sm 0;
+    font-weight: 500;
+  }
+}
+
+@media screen and (max-width: 1260px) {
+  .user-response-container {
+    width: 90%;
+    margin: $xl auto;
+  }
+}

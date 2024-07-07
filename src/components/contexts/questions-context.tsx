@@ -2,7 +2,7 @@ import { createContext, useContext, useReducer, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import useAxios from "utils/axios";
-import { REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState, UndoRedoOperationItem } from "utils/constants";
+import { REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState } from "utils/constants";
 import { Question } from "utils/Question";
 
 const DocumentContext = createContext<null | any>(null);
@@ -13,7 +13,8 @@ const initialState: DocumentInitialState = {
   documentDescription: '',
   currentFocusedQuestionId: 'sdd',
   currQueIndex: 0,
-  viewDocument: false
+  viewDocument: false,
+  createdByUserID: ''
 };
 
 function reducer(state: any, action: any) {
@@ -29,6 +30,7 @@ function reducer(state: any, action: any) {
           question.open = false;
           return new Question(question);
         }),
+        createdByUserID: action.payload.createdByUserID,
         currentFocusedQuestionId: action.payload.questions[0]?._id || ''
       };
     }
@@ -202,7 +204,7 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
   let params = useParams();
   let { HttpRequestController } = useAxios();
   const [
-    { questions, documentName, documentDescription, currQueIndex, currentFocusedQuestionId, viewDocument }, dispatch
+    { questions, documentName, documentDescription, currQueIndex, currentFocusedQuestionId, viewDocument, createdByUserID }, dispatch
   ] = useReducer(reducer, initialState);
 
   const loadDocument = async () => {
@@ -224,7 +226,7 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
   return (
     <DocumentContext.Provider
       value={{
-        questions, documentDescription, documentName, currQueIndex, currentFocusedQuestionId, viewDocument,
+        questions, documentDescription, documentName, currQueIndex, currentFocusedQuestionId, viewDocument, createdByUserID,
         dispatch
       }}
     >

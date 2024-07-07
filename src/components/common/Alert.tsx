@@ -33,8 +33,7 @@ function a11yProps(index: number) {
   };
 }
 
-export default function AlertDialog() {
-
+const AlertDialog: React.FC<any> = ({ url }) => {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -45,7 +44,7 @@ export default function AlertDialog() {
     setOpen(false);
   };
 
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(1);
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
@@ -93,7 +92,7 @@ export default function AlertDialog() {
         <TabPanel value={value} index={1}>
           <div className="dialog-tab-panels">
             <div className="tab-text">Link</div>
-            <TextField label="" size="small" defaultValue="To" className="text-field" />
+            <TextField label="" size="small" defaultValue={url} className="text-field" />
             <div className="include-email">
               <input type="checkbox" /> Shorten URL
             </div>
@@ -125,3 +124,5 @@ export default function AlertDialog() {
   </div >
   );
 }
+
+export default AlertDialog;

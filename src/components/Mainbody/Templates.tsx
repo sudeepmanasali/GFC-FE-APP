@@ -15,7 +15,6 @@ export function Templates() {
   let { HttpRequestController, isRequestPending } = useAxios();
   let navigate = useNavigate();
   let { user } = getUserInfo();
-
   const sendRequestToCreateForm = async (defaultQuestions: any): Promise<void> => {
     let res = await HttpRequestController(REQUEST_URLS.CREATE_NEW_DOCUMENT, HTTP_METHODS.POST, {
       documentName: "untitled-form",
@@ -23,10 +22,11 @@ export function Templates() {
       questions: defaultQuestions,
       createdOn: getCurrentDateTime(),
       createdBy: user.username,
+      createdByUserID: user.userId,
       updatedOn: getCurrentDateTime(),
     });
     if (res) {
-      navigate(`/question-paper/${res?.documentId}`);
+      navigate(`/forms/${res?.documentId}`, { state: { edit: true } });
     }
   }
 

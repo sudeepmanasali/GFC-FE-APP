@@ -199,6 +199,7 @@
             color: $textColor;
             border-bottom: 1.5px solid $main;
             text-transform: capitalize;
+            margin-left: 2 * $xs;
           }
 
           .text-input:focus {
@@ -370,4 +371,18 @@
     width: 90%;
     padding: 0 $xl;
   }
+}
+
+.display-options {
+  margin-left: $sm;
+  margin-top: $xs;
+}
+
+.error-text {
+  color: rgb(217, 48, 37);
+  @include flex-row;
+  justify-content: flex-start;
+  font-size: $sm;
+  text-transform: none;
+  margin-top: $sm;
 }
