@@ -81,6 +81,10 @@ export enum QUESTION_ACTION_TYPES {
   VIEW_DOCUMENT = 'VIEW_DOCUMENT'
 }
 
+export const SOCKET_CHANNEL_NAMES = {
+  USER_RESPONSE: 'USER_RESPONSE'
+}
+
 // interfaces
 export interface ActionPayload {
   type: ACTION_TYPES,

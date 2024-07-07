@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import useAxios from 'utils/axios';
-import { HTTP_METHODS, REQUEST_URLS } from 'utils/constants';
+import { HTTP_METHODS, REQUEST_URLS, SOCKET_CHANNEL_NAMES } from 'utils/constants';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
+import socket from 'utils/SocketManager';
 
 type ResponseData = {
   id: number,
@@ -23,16 +24,28 @@ export default function DataTable() {
 
   let params = useParams();
   let { HttpRequestController } = useAxios();
+
+  let idCounter = 0;
+  const createRow = (username: string, submittedOn: string) => {
+    return { id: ++idCounter, username, submittedOn };
+  };
+
   const loadDocument = async () => {
     setLoading(true);
     let { formResponses } = await HttpRequestController(REQUEST_URLS.USER_RESPONSE + `/${params.documentId}`, HTTP_METHODS.GET);
-    setRows(formResponses.map((formResponse: any, index: number) => {
-      return {
-        id: index + 1,
-        username: formResponse.username,
-        submittedOn: formResponse.submittedOn,
+    let rowsData = formResponses.map((formResponse: any) => {
+      return createRow(formResponse.username, formResponse.submittedOn);
+    })
+    setRows(rowsData);
+
+    // listening to get the user data
+    socket.on(SOCKET_CHANNEL_NAMES.USER_RESPONSE, (newData: any) => {
+      if (newData.documentId == params.documentId) {
+        let newFormResponse = createRow(newData.username, newData.submittedOn);
+        console.log(newFormResponse, rowsData);
+        setRows([...rowsData, newFormResponse]);
       }
-    }));
+    });
     setLoading(false);
   }
 
