@@ -33,6 +33,8 @@
 8. User can view the form by clicking the Eye icon from form header
 9. User can click on Save button to save the form
 10. User can delete the form by clicking the delete icon from form header
+11. User can share the link of a document to ge the response
+12. User can see who all have responded in the response tab, live update happens here table will be updated as soon as user response to the form
 
 **Project Live** : https://gf-clone-c266a.web.app/
 
