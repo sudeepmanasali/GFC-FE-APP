@@ -1,38 +1,51 @@
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import FolderOpenSharpIcon from '@mui/icons-material/FolderOpenSharp';
 import StorageSharpIcon from '@mui/icons-material/StorageSharp';
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "./Card";
-import { FOLDER_VIEW_TYPE, HTTP_METHODS, INTERNAL_SERVER_ERROR, LOADING, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS } from "../../utils/constants";
+import { FOLDER_VIEW_TYPE } from "../../utils/constants";
 import "./Mainbody.scss";
-import useAxios from "../../utils/axios";
-import getUserInfo from "../../utils/auth-validate";
-import { compareDesc, parseISO } from "date-fns";
+import { useDocumentsName } from "components/contexts/documents-context";
+import { useNavigate } from "react-router-dom";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 export const Mainbody = () => {
   const [type, setType] = useState(FOLDER_VIEW_TYPE.FILE);
-  const { HttpRequestController, handlePromiseRequest } = useAxios();
-  const [files, setFiles] = useState([]);
-  const { user } = getUserInfo();
-
-  const getDocuments = async () => {
-    let res = await HttpRequestController(REQUEST_URLS.GET_ALL_DOCUMENTS, HTTP_METHODS.POST, { username: user.username });
-    const getDateTime = (dateTimeStr: string): Date => {
-      return parseISO(dateTimeStr);
-    };
-
-    // sorting the documents based on the updated time
-    res?.documents.sort((doc1: any, doc2: any) => {
-      const dateA = getDateTime(doc1.updatedOn);
-      const dateB = getDateTime(doc2.updatedOn);
-      return compareDesc(dateA, dateB);
-    });
-    setFiles(res?.documents);
+  const { filteredFiles } = useDocumentsName();
+  const navigate = useNavigate();
+  const openForm = (documentId: string) => {
+    navigate(`/forms/${documentId}`, { state: { edit: true } });
   }
 
+  let [rows, setRows] = useState<any>([]);
+
+  let columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', flex: 1 },
+    { field: 'documentName', headerName: 'Document Name', flex: 1 },
+    { field: 'createdOn', headerName: 'Created On', flex: 2 },
+    { field: 'updatedOn', headerName: 'Updated On', flex: 2 },
+    {
+      field: "action",
+      align: "center",
+      flex: 2,
+      headerName: "",
+      sortable: false,
+      renderCell: (params: any) => {
+        const onClick = () => {
+          openForm(filteredFiles[params.row.id - 1]._id);
+        };
+        return <Button variant="contained" color="primary" onClick={onClick}>open</Button>;
+      }
+    }
+  ];
+
   useEffect(() => {
-    handlePromiseRequest(getDocuments, LOADING, REQUEST_SUCCESS_MESSAGES.FORMS_LOADED_SUCCESSFULLY, INTERNAL_SERVER_ERROR);
-  }, []);
+    let data: { id: number, documentName: string; createdOn: string; updatedOn: string; }[] = [];
+    filteredFiles.map((element: any, index: number) => {
+      return data.push({ "id": index + 1, "documentName": element.documentName, "createdOn": element.createdOn, "updatedOn": element.updatedOn });
+    });
+    setRows(data);
+  }, [filteredFiles]);
 
   return <div className="docs-section">
     <div className="header">
@@ -52,13 +65,32 @@ export const Mainbody = () => {
 
     {type == FOLDER_VIEW_TYPE.FILE && (
       <div className="docs-container">
-        {files && files.length > 0 ? (
-          files.map((ele, i) => <Card key={'id' + i} document={ele} />)
+        {filteredFiles && filteredFiles.length > 0 ? (
+          filteredFiles.map((ele: any, i: string) => <Card key={'id' + i} document={ele} openForm={openForm} />)
         ) : (
           <div style={{ textAlign: "center", fontSize: "20px" }}>
             No records found
           </div>
         )}
+      </div>
+    )}
+
+    {type == FOLDER_VIEW_TYPE.ROWS && (
+      <div style={{ maxHeight: "1000", display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '100%' }}>
+          {
+            (<DataGrid
+              rows={rows}
+              columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 5 },
+                },
+              }}
+              pageSizeOptions={[5, 7]}
+            />)
+          }
+        </div>
       </div>
     )}
   </div>

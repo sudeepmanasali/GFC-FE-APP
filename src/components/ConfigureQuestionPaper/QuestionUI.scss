@@ -390,3 +390,18 @@
   text-transform: none;
   margin-top: $sm;
 }
+
+.back-button {
+  position: absolute;
+  top: 10;
+
+  .edit-question-paper-icon {
+    color: $main;
+    background-color: rgb(76, 175, 80);
+    padding: $sm;
+    border-radius: 50%;
+    position: fixed;
+    top: $xl;
+    left: $xl;
+  }
+}

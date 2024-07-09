@@ -13,6 +13,7 @@ import { Toaster } from 'react-hot-toast';
 import { useAuth } from 'components/contexts/auth-context';
 import { DocumentContextProvider } from 'components/contexts/questions-context';
 import { UserResponseView } from 'components/userview/UserResponseView';
+import { DocumentsNameContextProvider } from 'components/contexts/documents-context';
 
 function App() {
   let { isLoggedIn } = useAuth();
@@ -27,11 +28,11 @@ function App() {
             )} />
 
           <Route path={ROUTE_PATHS.HOME} element={isLoggedIn ? (
-            <>
+            <DocumentsNameContextProvider>
               <Header />
               <Templates />
               <Mainbody />
-            </>
+            </DocumentsNameContextProvider>
           ) : (
             <Navigate to={ROUTE_PATHS.LOGIN} replace />
           )}

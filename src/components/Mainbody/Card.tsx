@@ -5,12 +5,7 @@ import StorageSharpIcon from '@mui/icons-material/StorageSharp';
 import formimage from "../../assets/images/t-shirt.png";
 import "./Mainbody.scss"
 
-export const Card: React.FC<any> = ({ document }) => {
-  const navigate = useNavigate();
-  const openForm = (documentId: string) => {
-    navigate(`/forms/${documentId}`, { state: { edit: true } });
-  }
-
+export const Card: React.FC<any> = ({ document, openForm }) => {
   return <div className="doc-card" onClick={() => {
     openForm(document._id);
   }}>

@@ -22,6 +22,7 @@ import "./QuestionUI.scss";
 import { SelectBox } from './SelectBox';
 import { useDocument } from 'components/contexts/questions-context';
 import getUserInfo from 'utils/auth-validate';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 export function QuestionForm() {
   const [yoffset, setYOffset] = useState(0);
@@ -311,6 +312,19 @@ export function QuestionForm() {
           })} />
         </Tooltip>)
       }
+
+      {viewDocument && (
+        <div className="back-button">
+          <Tooltip title="Go Back">
+            <ArrowBackIosNewIcon className="edit-question-paper-icon" onClick={() => {
+              dispatch({
+                type: QUESTION_ACTION_TYPES.VIEW_DOCUMENT
+              })
+            }} />
+          </Tooltip>
+        </div>)
+      }
+
     </div >
   )
 }

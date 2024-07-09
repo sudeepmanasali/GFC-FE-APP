@@ -6,8 +6,10 @@ import formimage from "../../assets/images/forms-icon.png";
 import "./Header.scss"
 import TemporaryDrawer from '../Sidenav/Drawer';
 import ProfileButton from 'components/common/Dropdown';
+import { useDocumentsName } from 'components/contexts/documents-context';
 
 export const Header = () => {
+  const { filterFiles } = useDocumentsName();
   return <div className="header">
     <div className="header-info">
       <TemporaryDrawer />
@@ -18,7 +20,7 @@ export const Header = () => {
       <IconButton>
         <SearchIcon />
       </IconButton>
-      <input type="text" placeholder="Search" />
+      <input type="text" placeholder="Search" onChange={(e) => filterFiles(e.target.value)} />
     </div>
     <div className="row">
       <IconButton style={{ margin: "0px" }}>

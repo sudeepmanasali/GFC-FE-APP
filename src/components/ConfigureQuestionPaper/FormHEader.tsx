@@ -77,7 +77,7 @@ function FormHeader() {
                 <h2
                   id="simple-modal-title"
                 >
-                  Are you sure to delete this question paper?
+                  Are you sure to delete this document ?
                 </h2>
                 <div className='btns'>
                   <Button variant="contained" color="inherit" onClick={handleClose}>
