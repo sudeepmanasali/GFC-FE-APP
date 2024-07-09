@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
 
-let socket = io("http://localhost:9000");
+let socket = io("https://gfc-be-app.onrender.com");
 
 export default socket;
