@@ -1,4 +1,4 @@
-import { Button, IconButton } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import FolderOpenSharpIcon from '@mui/icons-material/FolderOpenSharp';
 import StorageSharpIcon from '@mui/icons-material/StorageSharp';
 import { useEffect, useState } from "react";
@@ -54,12 +54,16 @@ export const Mainbody = () => {
       </div>
 
       <div className="header-right">
-        <IconButton onClick={() => { setType(FOLDER_VIEW_TYPE.ROWS); }}>
-          <StorageSharpIcon style={{ fontSize: "16px", color: "black" }} />
-        </IconButton>
-        <IconButton onClick={() => { setType(FOLDER_VIEW_TYPE.FILE); }}>
-          <FolderOpenSharpIcon style={{ fontSize: "16px", color: "black" }} />
-        </IconButton>
+        <Tooltip title="Table View">
+          <IconButton onClick={() => { setType(FOLDER_VIEW_TYPE.ROWS); }}>
+            <StorageSharpIcon style={{ fontSize: "16px", color: "black" }} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Folder View">
+          <IconButton onClick={() => { setType(FOLDER_VIEW_TYPE.FILE); }}>
+            <FolderOpenSharpIcon style={{ fontSize: "16px", color: "black" }} />
+          </IconButton>
+        </Tooltip>
       </div>
     </div>
 
