@@ -3,7 +3,7 @@
 .form-header {
   @include flex-row;
   justify-content: space-between;
-  margin: $sm $md;
+  padding: $sm $md;
   flex-wrap: wrap;
   background-color: $main;
 

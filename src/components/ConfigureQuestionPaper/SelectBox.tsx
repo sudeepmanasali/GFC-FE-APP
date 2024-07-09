@@ -33,11 +33,11 @@ export const SelectBox: React.FC<propsType> = ({ questionIndex, question }) => {
     });
   }
 
-  return <Select className="select" value={question.questionType}
+  return <Select className="select" value={question.questionType} color="success"
     onChange={(e) => { updatedQuestionType(e.target.value) }}>
     {
-      menuItem.map((value: QUESTION_TYPES) => {
-        return <MenuItem id="checkbox" value={value} >
+      menuItem.map((value: QUESTION_TYPES, index: number) => {
+        return <MenuItem id="checkbox" value={value} color="success" key={index}>
           <div className="menu-item">{IconMap.get(value).icon} <span className="label">{IconMap.get(value).text}</span></div>
         </MenuItem>
       })

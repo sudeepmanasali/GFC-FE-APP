@@ -51,3 +51,7 @@ $inputColor: #202124;
   align-items: center;
   justify-content: space-between;
 }
+
+body {
+  overscroll-behavior-y: none;
+}

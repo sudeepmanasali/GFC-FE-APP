@@ -1,21 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Templates.scss";
 import blank from "../../assets/images/forms-blank-googlecolors.png";
 import UnfoldMoreSharpIcon from '@mui/icons-material/UnfoldMoreSharp';
 import MoreVertSharpIcon from '@mui/icons-material/MoreVertSharp';
 import { IconButton } from "@mui/material";
 import useAxios from "../../utils/axios";
-import { HTTP_METHODS, REQUEST_URLS } from "../../utils/constants";
+import { HTTP_METHODS, REQUEST_FAILURE_MESSAGES, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
 import { getCurrentDateTime } from "../../utils/util";
 import getUserInfo from "../../utils/auth-validate";
-import toast from "react-hot-toast";
 
 export function Templates() {
-  let { HttpRequestController, isRequestPending } = useAxios();
+  let { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
   let navigate = useNavigate();
   let { user } = getUserInfo();
-  const sendRequestToCreateForm = async (defaultQuestions: any): Promise<void> => {
+  let defaultQuestions = [
+    {
+      question: "Question",
+      questionType: "radio",
+      answer: false,
+      points: 0,
+      options: [{ option: "Option 1" }],
+      open: true,
+      required: false
+    },
+  ];
+  const sendRequestToCreateForm = async (): Promise<void> => {
     let res = await HttpRequestController(REQUEST_URLS.CREATE_NEW_DOCUMENT, HTTP_METHODS.POST, {
       documentName: "untitled-form",
       documentDescription: "Add Description",
@@ -32,27 +42,10 @@ export function Templates() {
 
   const createform = (e: any): void => {
     e.preventDefault();
-    let defaultQuestions = [
-      {
-        question: "Question",
-        questionType: "radio",
-        answer: false,
-        points: 0,
-        options: [{ option: "Option 1" }],
-        open: true,
-        required: false
-      },
-    ];
-
-    toast.promise(
-      sendRequestToCreateForm(defaultQuestions),
-      {
-        loading: 'Request in progress',
-        success: 'Document created successfully',
-        error: 'Document creation failed, Please try again'
-      }
-    );
+    handlePromiseRequest(sendRequestToCreateForm, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES.DOCUMENT_CREATED_SUCCESSFULLY,
+      REQUEST_FAILURE_MESSAGES.DOCUMENT_CREATION_FAILED);
   }
+
   return (
     <div className="template-section">
       <div className="actual-width">

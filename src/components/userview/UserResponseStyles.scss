@@ -1,0 +1,57 @@
+@import "../../Styles.scss";
+
+.response-form {
+  height: 96vh;
+  overflow-y: scroll;
+  padding-bottom: $xl;
+  width: 100%;
+  background-color: rgb(228, 243, 229);
+
+  .section {
+    margin: $xl auto;
+    @include flex-column;
+    width: 40%;
+
+    .response-box {
+      .form-top-name {
+        box-sizing: border-box;
+        font-size: $xl;
+        font-weight: 400;
+        line-height: $xl;
+        line-height: 135%;
+        width: 100%;
+        border: none;
+        outline: none;
+        border-bottom: 1px solid #f4f4f9;
+        color: black;
+        height: $xl+$xs;
+        margin-bottom: $xs;
+      }
+
+      .form-top-desc {
+        @extend .form-top-name;
+        font-size: $sm;
+        height: $lg;
+        color: $black;
+      }
+    }
+
+
+    .response-box {
+      background-color: $main;
+      width: 100%;
+      margin-bottom: $sm;
+      padding: $md;
+      border-radius: 2 * $xs;
+      box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+
+      .display-options {
+        margin-top: $md;
+      }
+    }
+  }
+}
+
+.add-border-top {
+  border-top: 2*$xs solid rgb(76, 175, 80);
+}

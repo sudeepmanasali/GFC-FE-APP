@@ -1,8 +1,7 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
-import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import useAxios from "utils/axios";
-import { REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState } from "utils/constants";
+import { REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState, LOADING, INTERNAL_SERVER_ERROR, REQUEST_SUCCESS_MESSAGES } from "utils/constants";
 import { Question } from "utils/Question";
 
 const DocumentContext = createContext<null | any>(null);
@@ -202,7 +201,7 @@ function reducer(state: any, action: any) {
 
 const DocumentContextProvider: React.FC<any> = ({ children }) => {
   let params = useParams();
-  let { HttpRequestController } = useAxios();
+  let { HttpRequestController, handlePromiseRequest } = useAxios();
   const [
     { questions, documentName, documentDescription, currQueIndex, currentFocusedQuestionId, viewDocument, createdByUserID }, dispatch
   ] = useReducer(reducer, initialState);
@@ -213,14 +212,7 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
   }
 
   useEffect(() => {
-    toast.promise(
-      loadDocument(),
-      {
-        loading: 'loading...',
-        success: 'Questions loaded successfully',
-        error: 'Internal Server Error'
-      }
-    );
+    handlePromiseRequest(loadDocument, LOADING, REQUEST_SUCCESS_MESSAGES.QUESTIONS_LOADED_SUCCESSFULLY, INTERNAL_SERVER_ERROR);
   }, []);
 
   return (

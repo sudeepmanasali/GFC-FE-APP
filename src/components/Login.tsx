@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { HTTP_METHODS, REQUEST_URLS, ROUTE_PATHS, SESSION_STORAGE_KEYS, UserLogin, UserRegister } from "../utils/constants";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { HTTP_METHODS, REQUEST_FAILURE_MESSAGES, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS, SESSION_STORAGE_KEYS, UserLogin, UserRegister } from "../utils/constants";
 import { getCurrentDateTime, validateEmail } from "../utils/util";
 import "./Login.scss";
 import useAxios from "../utils/axios";
@@ -12,8 +12,10 @@ function Login() {
   let [register, setRegister] = useState<UserRegister>({});
   let [login, setLogin] = useState<UserLogin>({});
   const navigate = useNavigate();
-  const { HttpRequestController, isRequestPending } = useAxios();
+  const { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
   const { handleLogin } = useAuth();
+  const location = useLocation();
+  const { from } = location.state || { from: { pathname: '/' } };
 
   const sendLoginRequest = async () => {
     const res = await HttpRequestController(REQUEST_URLS.LOGIN, HTTP_METHODS.POST, login);
@@ -23,7 +25,7 @@ function Login() {
       localStorage.setItem(SESSION_STORAGE_KEYS.USER_ID, res.data.userId);
       localStorage.setItem(SESSION_STORAGE_KEYS.USERNAME, res.data.username);
       localStorage.setItem(SESSION_STORAGE_KEYS.IS_AUTH, 'true');
-      navigate(ROUTE_PATHS.HOME, { replace: true });
+      navigate(from, { replace: true });
       setLogin({});
       handleLogin(true);
     }
@@ -40,32 +42,19 @@ function Login() {
 
   const handleLoginFunction = async () => {
     if (login.email && login.password && validateEmail(login.email)) {
-      toast.promise(
-        sendLoginRequest(),
-        {
-          loading: 'Request in progress',
-          success: 'Logged in successfully',
-          error: 'Login Failed, Please try again'
-        }
-      );
+      handlePromiseRequest(sendLoginRequest, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES.LOGGED_IN_SUCCESSFULLY, REQUEST_FAILURE_MESSAGES.LOGIN_FAILED);
     } else {
-      toast.error("Please enter all valid details");
+      toast.error(REQUEST_FAILURE_MESSAGES.PLEASE_ENTER_DETAILS);
     }
   };
 
   const handleRegister = async () => {
     if (register.username && register.username.trim().length != 0 && register.password && register.email
       && validateEmail(register.email) && register.phone && register.phone.length == 10) {
-      toast.promise(
-        sendRegisterRequest(),
-        {
-          loading: 'Request in progress',
-          success: 'Registered successfully',
-          error: 'Registration Failed, Please try again'
-        }
-      );
+      handlePromiseRequest(sendRegisterRequest, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES.USER_REGISTERED_SUCCESSFULLY,
+        REQUEST_FAILURE_MESSAGES.REGISTRATION_FAILED);
     } else {
-      toast.error("Please enter all valid details");
+      toast.error(REQUEST_FAILURE_MESSAGES.PLEASE_ENTER_DETAILS);
     }
   };
 

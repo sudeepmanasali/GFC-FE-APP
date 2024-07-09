@@ -12,14 +12,13 @@ import AlertDialog from "../common/Alert";
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { HTTP_METHODS, QUESTION_ACTION_TYPES, REQUEST_URLS, ROUTE_PATHS } from "../../utils/constants";
-import toast from "react-hot-toast";
+import { HTTP_METHODS, QUESTION_ACTION_TYPES, REQUEST_FAILURE_MESSAGES, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS, ROUTE_PATHS } from "../../utils/constants";
 import useAxios from "utils/axios";
 import ProfileButton from "components/common/Dropdown";
 import { useDocument } from "components/contexts/questions-context";
 
 function FormHeader() {
-  const { HttpRequestController, isRequestPending } = useAxios();
+  const { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
   const { viewDocument, documentName, dispatch } = useDocument();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -59,15 +58,10 @@ function FormHeader() {
   }
 
   const deleteDocument = () => {
-    toast.promise(
-      sendDeleteRequest(),
-      {
-        loading: 'Request in progress',
-        success: 'Document deleted successfully',
-        error: 'Document is not deleted, Please try again'
-      }
-    );
+    handlePromiseRequest(sendDeleteRequest, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES.DOCUMENT_DELETED_SUCCESSFULLY,
+      REQUEST_FAILURE_MESSAGES.DOCUMENT_DELETION_FAILED);
   };
+
   return (
     <React.Fragment>
       {
@@ -91,6 +85,7 @@ function FormHeader() {
                   </Button>
                   <Button
                     variant="contained"
+                    color="success"
                     disabled={isRequestPending}
                     onClick={deleteDocument}
                   >

@@ -10,10 +10,10 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import toast from 'react-hot-toast';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Question } from "../../utils/Question";
 import useAxios from '../../utils/axios';
-import { Answers, HTTP_METHODS, QUESTION_ACTION_TYPES, QUESTION_TYPES, REQUEST_URLS } from "../../utils/constants";
+import { Answers, HTTP_METHODS, QUESTION_ACTION_TYPES, QUESTION_TYPES, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS, ROUTE_PATHS } from "../../utils/constants";
 import { getCurrentDateTime } from '../../utils/util';
 import { DisplayQuestion } from './Displayquestion';
 import { OptionBox } from './OptionBox';
@@ -28,6 +28,7 @@ export function QuestionForm() {
   const [answers, setAnswers] = useState<Answers>();
   let { user } = getUserInfo();
   let params = useParams();
+  let navigate = useNavigate();
   let { HttpRequestController, isRequestPending } = useAxios();
   let { questions, dispatch, currentFocusedQuestionId, documentName, documentDescription, viewDocument, createdByUserID
   } = useDocument();
@@ -51,7 +52,7 @@ export function QuestionForm() {
       updatedOn: getCurrentDateTime(),
     }
     await HttpRequestController(REQUEST_URLS.UPDATE_DOCUMENT, HTTP_METHODS.PUT, payload);
-    toast.success("Questions saved successfully");
+    toast.success(REQUEST_SUCCESS_MESSAGES.QUESTIONS_SAVED_SUCCESSFULLY);
   }
 
   const handleValueChange = (question: Question, value: string, option?: string, checked?: boolean) => {
@@ -93,7 +94,8 @@ export function QuestionForm() {
         userId: user.userId
       }
       await HttpRequestController(`${REQUEST_URLS.USER_RESPONSE}/${params.documentId}`, HTTP_METHODS.POST, payload);
-      toast.success("Response saved successfully");
+      toast.success(REQUEST_SUCCESS_MESSAGES.REQUEST_SAVED_SUCCESSFULLY);
+      navigate(ROUTE_PATHS.HOME, { replace: true });
     }
   }
 
@@ -240,7 +242,7 @@ export function QuestionForm() {
 
   return (
     <div>
-      <div className={viewDocument ? "question-paper-full-height question-form" : "question-form"} id="question-form" onScroll={handleScroll}>
+      <div className={viewDocument ? " question-form question-paper-full-height" : "question-form"} id="question-form" onScroll={handleScroll}>
         <div className="section">
           <div className="question-title-section">
             <div className="question-form-top">
@@ -283,7 +285,7 @@ export function QuestionForm() {
           <div className="save-form">
             <Button
               variant="contained"
-              color="primary"
+              color="success"
               disabled={isRequestPending}
               onClick={!viewDocument ? updateDocument : submitUserResponse} >
               {viewDocument ? "Submit" : "Save"}

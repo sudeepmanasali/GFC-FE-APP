@@ -1,4 +1,4 @@
-import { Paper, Tab, Tabs } from '@mui/material';
+import { Divider, Paper, Tab, Tabs } from '@mui/material';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { a11yProps } from '../../utils/util';
@@ -32,25 +32,30 @@ export default function CenteredTabs() {
   };
 
   return (
-    <>
+    <div className={viewDocument ? "bg-green-color" : ""}>
       {
         !viewDocument && (<Paper className="root">
-          <Tabs value={value} onChange={handleChange} indicatorColor="primary"
+          <Tabs value={value} onChange={handleChange} indicatorColor={"primary"}
             textColor="primary" centered className="tabs">
             <Tab label="Questions" className="tab" {...a11yProps(0)} />
             <Tab label="Responses" className="tab" {...a11yProps(1)} />
           </Tabs>
 
           <TabPanel value={value} index={0}>
-            <QuestionForm />
+            <div style={{ background: "#e4f3e5" }}>
+              <QuestionForm />
+            </div>
           </TabPanel>
 
           <TabPanel value={value} index={1}>
             <div className="user-response-container">
               <div className='header-title'>User Form Responses</div>
-              <DataTable />
+              <div>
+                <DataTable />
+              </div>
             </div>
           </TabPanel>
+          <Divider />
         </Paper>)
       }
 
@@ -59,6 +64,6 @@ export default function CenteredTabs() {
       {
         viewDocument && (<QuestionForm />)
       }
-    </>
+    </div>
   )
 }

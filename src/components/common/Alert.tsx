@@ -51,7 +51,7 @@ const AlertDialog: React.FC<any> = ({ url }) => {
   };
 
   return (<div>
-    <Button variant="contained" color="primary" href="#contained-buttons" onClick={handleClickOpen}>Send</Button>
+    <Button variant="contained" color="success" href="#contained-buttons" onClick={handleClickOpen}>Send</Button>
     <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" className="dialog" aria-describedby="alert-dialog-description">
       <div className="dialog-content">
         <div className="dialog-title">

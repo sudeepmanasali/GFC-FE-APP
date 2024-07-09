@@ -3,7 +3,7 @@ import FolderOpenSharpIcon from '@mui/icons-material/FolderOpenSharp';
 import StorageSharpIcon from '@mui/icons-material/StorageSharp';
 import React, { useEffect, useState } from "react";
 import { Card } from "./Card";
-import { FOLDER_VIEW_TYPE, HTTP_METHODS, REQUEST_URLS } from "../../utils/constants";
+import { FOLDER_VIEW_TYPE, HTTP_METHODS, INTERNAL_SERVER_ERROR, LOADING, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS } from "../../utils/constants";
 import "./Mainbody.scss";
 import useAxios from "../../utils/axios";
 import getUserInfo from "../../utils/auth-validate";
@@ -11,7 +11,7 @@ import { compareDesc, parseISO } from "date-fns";
 
 export const Mainbody = () => {
   const [type, setType] = useState(FOLDER_VIEW_TYPE.FILE);
-  const { HttpRequestController } = useAxios();
+  const { HttpRequestController, handlePromiseRequest } = useAxios();
   const [files, setFiles] = useState([]);
   const { user } = getUserInfo();
 
@@ -22,16 +22,16 @@ export const Mainbody = () => {
     };
 
     // sorting the documents based on the updated time
-    res.documents.sort((doc1: any, doc2: any) => {
+    res?.documents.sort((doc1: any, doc2: any) => {
       const dateA = getDateTime(doc1.updatedOn);
       const dateB = getDateTime(doc2.updatedOn);
       return compareDesc(dateA, dateB);
     });
-    setFiles(res.documents);
+    setFiles(res?.documents);
   }
 
   useEffect(() => {
-    getDocuments();
+    handlePromiseRequest(getDocuments, LOADING, REQUEST_SUCCESS_MESSAGES.FORMS_LOADED_SUCCESSFULLY, INTERNAL_SERVER_ERROR);
   }, []);
 
   return <div className="docs-section">

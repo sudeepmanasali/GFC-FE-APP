@@ -203,7 +203,7 @@
           }
 
           .text-input:focus {
-            border-bottom: 1.5px solid rgb(103, 58, 183);
+            border-bottom: 1.5px solid rgb(76, 175, 80);
           }
         }
       }
@@ -250,26 +250,24 @@
 }
 
 .question-form {
-  background-color: $main;
-  height: 75vh;
+  height: 80vh;
   overflow-y: scroll;
   padding: $xl;
   padding-bottom: $xl;
   display: flex;
   flex-direction: row;
-  width: 50%;
+  justify-content: center;
   margin: auto;
-  margin-top: $sm;
 
   .section {
     margin-right: $lg;
-    width: 100%;
+    width: 50%;
 
     .question-title-section {
       .question-form-top {
         background-color: $main;
         box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
-        border-top: 2*$xs solid rgb(103, 58, 183);
+        border-top: 2*$xs solid rgb(76, 175, 80);
         border-radius: 2*$xs;
         padding: $xl $lg+$xs;
         text-transform: capitalize;
@@ -301,6 +299,7 @@
 
     .save-form {
       margin: $xl 0;
+      padding-bottom: $lg;
     }
   }
 }
@@ -323,6 +322,10 @@
 .edit {
   color: #5f6368;
   padding: 8px 5px;
+
+  &:hover {
+    color: rgb(76, 175, 80)
+  }
 }
 
 .Mui-expanded .MuiAccordionSummary-gutters {
@@ -353,7 +356,7 @@
 
 .edit-question-paper-icon {
   color: $main;
-  background-color: #4285f4;
+  background-color: rgb(76, 175, 80);
   padding: $md;
   border-radius: 50%;
   margin-right: $sm;
@@ -363,7 +366,8 @@
 }
 
 .question-paper-full-height {
-  height: 100%;
+  min-height: 93vh;
+  max-height: 93vh;
 }
 
 @media screen and (max-width: 760px) {

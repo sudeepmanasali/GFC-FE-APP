@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { HTTP_METHODS, SESSION_STORAGE_KEYS } from './constants';
+import { HTTP_METHODS, REQUEST_IN_PROGRESS, SESSION_STORAGE_KEYS } from './constants';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 
@@ -16,7 +16,7 @@ const useAxios = () => {
 
     // check if any request already exists
     if (isRequestPending) {
-      toast.error('Request is already in progress...!');
+      toast.error(REQUEST_IN_PROGRESS);
       return;
     }
 
@@ -62,7 +62,18 @@ const useAxios = () => {
     }
   };
 
-  return { HttpRequestController, isRequestPending };
+  const handlePromiseRequest = (method: Function, loadingMessage: string, successMessage: string, errorMessage: string): void => {
+    toast.promise(
+      method(),
+      {
+        loading: loadingMessage,
+        success: successMessage,
+        error: errorMessage
+      }
+    );
+  }
+
+  return { HttpRequestController, isRequestPending, handlePromiseRequest };
 };
 
 export default useAxios;

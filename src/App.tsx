@@ -12,6 +12,7 @@ import { ThemeProvider } from './components/contexts/themeContext';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from 'components/contexts/auth-context';
 import { DocumentContextProvider } from 'components/contexts/questions-context';
+import { UserResponseView } from 'components/userview/UserResponseView';
 
 function App() {
   let { isLoggedIn } = useAuth();
@@ -43,10 +44,22 @@ function App() {
               </ThemeProvider>
             </DocumentContextProvider>
           ) : (
-            <Navigate to={ROUTE_PATHS.LOGIN} replace />
+            <Navigate
+              to={{ pathname: ROUTE_PATHS.LOGIN }}
+              state={{ from: location.pathname }}
+            />
           )}
-          >
-          </Route>
+          />
+
+          <Route path={ROUTE_PATHS.USER_RESPONSE_VIEW} element={isLoggedIn ? (
+            <UserResponseView />
+          ) : (
+            <Navigate
+              to={{ pathname: ROUTE_PATHS.LOGIN }}
+              state={{ from: location.pathname }}
+            />
+          )}
+          />
           <Route path={"*"} element={<Navigate to={ROUTE_PATHS.LOGIN} replace />}></Route>
         </Routes>
       </BrowserRouter >

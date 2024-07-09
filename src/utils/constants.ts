@@ -40,7 +40,8 @@ export enum ROUTE_PATHS {
   HOME = '/',
   LOGIN = '/login',
   QUESTION_PAPER = '/forms/:documentId',
-  USERVIEW = '/viewform/:documentId'
+  USERVIEW = '/viewform/:documentId',
+  USER_RESPONSE_VIEW = '/response-form/:userId/:documentId'
 }
 
 export enum UPDATE_QUESTION_STATE {
@@ -83,6 +84,26 @@ export enum QUESTION_ACTION_TYPES {
 
 export const SOCKET_CHANNEL_NAMES = {
   USER_RESPONSE: 'USER_RESPONSE'
+}
+
+export const REQUEST_SUCCESS_MESSAGES = {
+  RESPONSE_LOADED_SUCCESSFULLY: 'Response loaded successfully',
+  LOGGED_IN_SUCCESSFULLY: 'Logged in successfully',
+  USER_REGISTERED_SUCCESSFULLY: 'User registered successfully',
+  DOCUMENT_DELETED_SUCCESSFULLY: 'Document deleted successfully',
+  QUESTIONS_LOADED_SUCCESSFULLY: 'Questions loaded successfully',
+  FORMS_LOADED_SUCCESSFULLY: 'Forms loaded successfully',
+  DOCUMENT_CREATED_SUCCESSFULLY: 'Document created successfully',
+  QUESTIONS_SAVED_SUCCESSFULLY: "Questions saved successfully",
+  REQUEST_SAVED_SUCCESSFULLY: "Response saved successfully"
+}
+
+export const REQUEST_FAILURE_MESSAGES = {
+  PLEASE_ENTER_DETAILS: "Please enter all valid details",
+  LOGIN_FAILED: 'Login Failed, Please try again',
+  REGISTRATION_FAILED: 'Registration Failed, Please try again',
+  DOCUMENT_DELETION_FAILED: 'Document is not deleted, Please try again',
+  DOCUMENT_CREATION_FAILED: 'Document creation failed, Please try again'
 }
 
 // interfaces
@@ -164,3 +185,8 @@ export interface UndoRedoOperationItem {
 export interface Answers {
   [key: string]: any
 }
+
+// constant variables
+export const LOADING = 'loading';
+export const INTERNAL_SERVER_ERROR = 'Internal Server Error';
+export const REQUEST_IN_PROGRESS = 'Request in progress';
