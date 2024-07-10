@@ -1,11 +1,12 @@
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useAxios from "utils/axios";
-import { REQUEST_URLS, HTTP_METHODS, QUESTION_TYPES, INTERNAL_SERVER_ERROR, LOADING, REQUEST_SUCCESS_MESSAGES } from "utils/constants";
+import { REQUEST_URLS, HTTP_METHODS, QUESTION_TYPES, INTERNAL_SERVER_ERROR, LOADING, REQUEST_SUCCESS_MESSAGES, QUESTION_ACTION_TYPES } from "utils/constants";
 import { Question } from "utils/Question";
 import "./UserResponseStyles.scss";
-import { Typography } from "@mui/material";
+import { Tooltip, Typography } from "@mui/material";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { MultipleChoiceQuestion, CheckboxQuestion, DateQuestion, TimeQuestion, ShortAnswerQuestion } from "components/common/Formcontols";
 
 export const UserResponseView = () => {
@@ -14,6 +15,7 @@ export const UserResponseView = () => {
   const [formData, setFormData] = useState<any>();
   const [formResponse, setFormResponse] = useState<any>();
   const [answers, setAnswers] = useState<any>([]);
+  const navigate = useNavigate();
 
 
   const loadDocument = async () => {
@@ -78,6 +80,13 @@ export const UserResponseView = () => {
         </div>
       </div>)
     }
+
+
+    <div className="back-button">
+      <Tooltip title="Go Back">
+        <ArrowBackIosNewIcon className="edit-question-paper-icon" onClick={() => { navigate(-1) }} />
+      </Tooltip>
+    </div>
   </div>
 }
 
