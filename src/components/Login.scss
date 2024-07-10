@@ -3,22 +3,22 @@
 .login-container {
   @include flex-row;
   width: 100%;
-  background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+  background-color: rgb(228, 243, 229);
   height: 100vh;
   justify-content: center;
 
   .main {
-    width: 50%;
-    height: 600px;
+    width: 30%;
+    background-color: $main;
+    height: 500px;
     overflow: hidden;
     border-radius: 10px;
-    box-shadow: 5px 20px 50px #000;
     @include flex-column;
     justify-content: center;
 
     label {
       @include flex-column;
-      color: $main;
+      color: $black;
       font-size: 2 * $md;
       margin: 2 * $md;
       font-weight: bold;
@@ -41,35 +41,16 @@
       margin-bottom: $lg;
     }
 
-    button {
-      @include flex-row;
-      justify-content: center;
-      margin: $sm auto;
-      width: 50%;
-      text-align: center;
-      height: 2 * $lg;
-      color: $main;
-      background: #573b8a;
-      margin-top: $lg;
-      outline: none;
-      border: none;
-      border-radius: $xs;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
+    .buttons {
+      @include flex-column;
 
-    button:hover {
-      background: #6d44b8;
-    }
-
-    .text-button {
-      color: $main;
-      text-align: center;
-      cursor: pointer;
+      Button {
+        margin-top: $xs;
+      }
     }
 
     .error-text {
-      color: $main;
+      color: red;
       margin: 2*$xs 0;
     }
   }

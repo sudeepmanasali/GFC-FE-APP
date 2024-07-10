@@ -6,6 +6,7 @@ import "./Login.scss";
 import useAxios from "../utils/axios";
 import toast from "react-hot-toast";
 import { useAuth } from "./contexts/auth-context";
+import { Button } from "@mui/material";
 
 function Login() {
   let [isLogin, setIsLogin] = useState(false);
@@ -116,9 +117,9 @@ function Login() {
                 placeholder="Password"
               />
             </div>
-            <button onClick={handleRegister} disabled={isRequestPending}>Sign Up</button>
-            <div onClick={(e) => { setIsLogin(!isLogin); }} className="text-button">
-              Sign In
+            <div className="buttons">
+              <Button color="primary" variant="contained" onClick={handleRegister} disabled={isRequestPending}>Sign Up</Button>
+              <Button color="primary" onClick={(e) => { setIsLogin(!isLogin); }}>Sign In</Button>
             </div>
           </div>
         ) : (
@@ -150,12 +151,9 @@ function Login() {
                 placeholder="Password"
               />
             </div>
-            <button onClick={handleLoginFunction} disabled={isRequestPending}>Sign In</button>
-            <div onClick={(e) => {
-              setIsLogin(!isLogin);
-            }}
-              className="text-button">
-              Sign Up
+            <div className="buttons">
+              <Button color="primary" variant="contained" onClick={handleLoginFunction} disabled={isRequestPending}>Sign In</Button>
+              <Button color="primary" onClick={(e) => { setIsLogin(!isLogin); }}>Sign Up</Button>
             </div>
           </div>
         )}
