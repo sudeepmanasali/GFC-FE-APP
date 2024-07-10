@@ -15,7 +15,7 @@ export class Question {
 
   constructor(data?: Question) {
     this.question = data?.question || 'Question';
-    this.options = data?.options || [{ option: "" }];
+    this.options = data?.options || [{ option: "Option" }];
     this.questionType = data?.questionType as QUESTION_TYPES || QUESTION_TYPES.RADIO;
     this.open = data?.open == false ? false : true;
     this.required = data?.required || false;

@@ -103,7 +103,11 @@ export const REQUEST_FAILURE_MESSAGES = {
   LOGIN_FAILED: 'Login Failed, Please try again',
   REGISTRATION_FAILED: 'Registration Failed, Please try again',
   DOCUMENT_DELETION_FAILED: 'Document is not deleted, Please try again',
-  DOCUMENT_CREATION_FAILED: 'Document creation failed, Please try again'
+  DOCUMENT_CREATION_FAILED: 'Document creation failed, Please try again',
+  DOCUMENT_LOADING_FAILED: 'Unable to load the documents',
+  QUESTIONS_LOADING_FAILED: 'Unable to load the questions',
+  SAVING_QUESTIONS_FAILED: 'Unable to save the questions',
+  SAVING_USER_RESPONSE_FAILED: 'Unable to save the user response',
 }
 
 // interfaces

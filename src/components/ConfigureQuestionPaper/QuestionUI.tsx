@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Question } from "../../utils/Question";
 import useAxios from '../../utils/axios';
-import { Answers, HTTP_METHODS, QUESTION_ACTION_TYPES, QUESTION_TYPES, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS, ROUTE_PATHS } from "../../utils/constants";
+import { Answers, HTTP_METHODS, QUESTION_ACTION_TYPES, QUESTION_TYPES, REQUEST_FAILURE_MESSAGES, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS, ROUTE_PATHS } from "../../utils/constants";
 import { getCurrentDateTime } from '../../utils/util';
 import { DisplayQuestion } from './Displayquestion';
 import { OptionBox } from './OptionBox';
@@ -24,13 +24,14 @@ import { useDocument } from 'components/contexts/questions-context';
 import getUserInfo from 'utils/auth-validate';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
+const SAVING = 'Saving...';
 export function QuestionForm() {
   const [yoffset, setYOffset] = useState(0);
   const [answers, setAnswers] = useState<Answers>();
   let { user } = getUserInfo();
   let params = useParams();
   let navigate = useNavigate();
-  let { HttpRequestController, isRequestPending } = useAxios();
+  let { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
   let { questions, dispatch, currentFocusedQuestionId, documentName, documentDescription, viewDocument, createdByUserID
   } = useDocument();
 
@@ -44,16 +45,17 @@ export function QuestionForm() {
     updateToolBoxPosition();
   }, [currentFocusedQuestionId, questions]);
 
-  const updateDocument = async (): Promise<void> => {
-    let payload = {
-      _id: params.documentId,
-      documentName,
-      documentDescription,
-      questions,
-      updatedOn: getCurrentDateTime(),
-    }
-    await HttpRequestController(REQUEST_URLS.UPDATE_DOCUMENT, HTTP_METHODS.PUT, payload);
-    toast.success(REQUEST_SUCCESS_MESSAGES.QUESTIONS_SAVED_SUCCESSFULLY);
+  const updateDocument = (): void => {
+    handlePromiseRequest(async () => {
+      let payload = {
+        _id: params.documentId,
+        documentName,
+        documentDescription,
+        questions,
+        updatedOn: getCurrentDateTime(),
+      }
+      await HttpRequestController(REQUEST_URLS.UPDATE_DOCUMENT, HTTP_METHODS.PUT, payload);
+    }, SAVING, REQUEST_SUCCESS_MESSAGES.QUESTIONS_SAVED_SUCCESSFULLY, REQUEST_FAILURE_MESSAGES.SAVING_QUESTIONS_FAILED)
   }
 
   const handleValueChange = (question: Question, value: string, option?: string, checked?: boolean) => {
@@ -83,7 +85,7 @@ export function QuestionForm() {
     });
   }
 
-  const submitUserResponse = async (): Promise<void> => {
+  const saveUserResponse = async (): Promise<void> => {
     if (checkAllRequiredQuestionsAreAnswered()) {
       let payload = {
         documentId: params.documentId,
@@ -98,6 +100,10 @@ export function QuestionForm() {
       toast.success(REQUEST_SUCCESS_MESSAGES.REQUEST_SAVED_SUCCESSFULLY);
       navigate(ROUTE_PATHS.HOME, { replace: true });
     }
+  }
+
+  const submitUserResponse = () => {
+    handlePromiseRequest(saveUserResponse, SAVING, REQUEST_SUCCESS_MESSAGES.REQUEST_SAVED_SUCCESSFULLY, REQUEST_FAILURE_MESSAGES.SAVING_USER_RESPONSE_FAILED)
   }
 
   const isElementBoxVisible = (): boolean => {

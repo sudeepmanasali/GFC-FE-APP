@@ -55,11 +55,11 @@ const useAxios = () => {
             error.response.data.message
               ? error.response.data.message
               : error.response.statusText
-          )
-          : toast.error("Network error");
+          ) : toast.error("Network error");
     } else {
       toast.error('An error occurred. Please try again.');
     }
+    throw new Error(error.message);
   };
 
   const handlePromiseRequest = (method: Function, loadingMessage: string, successMessage: string, errorMessage: string): void => {

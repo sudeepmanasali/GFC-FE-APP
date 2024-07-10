@@ -2,7 +2,7 @@ import { parseISO, compareDesc } from "date-fns";
 import { createContext, useContext, useEffect, useState } from "react";
 import getUserInfo from "utils/auth-validate";
 import useAxios from "utils/axios";
-import { REQUEST_URLS, HTTP_METHODS, INTERNAL_SERVER_ERROR, LOADING, REQUEST_SUCCESS_MESSAGES } from "utils/constants";
+import { REQUEST_URLS, HTTP_METHODS, INTERNAL_SERVER_ERROR, LOADING, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES } from "utils/constants";
 
 
 const DocumentsNameContext = createContext<null | any>(null);
@@ -25,12 +25,12 @@ const DocumentsNameContextProvider: React.FC<any> = ({ children }) => {
       const dateB = getDateTime(doc2.updatedOn);
       return compareDesc(dateA, dateB);
     });
-    setFiles(res?.documents);
-    setFilteredFiles(res?.documents);
+    setFiles(res?.documents || []);
+    setFilteredFiles(res?.documents || []);
   }
 
   useEffect(() => {
-    handlePromiseRequest(getDocuments, LOADING, REQUEST_SUCCESS_MESSAGES.FORMS_LOADED_SUCCESSFULLY, INTERNAL_SERVER_ERROR);
+    handlePromiseRequest(getDocuments, LOADING, REQUEST_SUCCESS_MESSAGES.FORMS_LOADED_SUCCESSFULLY, REQUEST_FAILURE_MESSAGES.DOCUMENT_LOADING_FAILED);
   }, []);
 
   const filterFiles = (value: string) => {

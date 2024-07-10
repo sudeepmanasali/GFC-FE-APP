@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useAxios from "utils/axios";
-import { REQUEST_URLS, HTTP_METHODS, QUESTION_TYPES, INTERNAL_SERVER_ERROR, LOADING, REQUEST_SUCCESS_MESSAGES, QUESTION_ACTION_TYPES } from "utils/constants";
+import { REQUEST_URLS, HTTP_METHODS, QUESTION_TYPES, INTERNAL_SERVER_ERROR, LOADING, REQUEST_SUCCESS_MESSAGES } from "utils/constants";
 import { Question } from "utils/Question";
 import "./UserResponseStyles.scss";
 import { Tooltip, Typography } from "@mui/material";
@@ -11,7 +11,7 @@ import { MultipleChoiceQuestion, CheckboxQuestion, DateQuestion, TimeQuestion, S
 
 export const UserResponseView = () => {
   const params = useParams();
-  const { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
+  const { HttpRequestController, handlePromiseRequest } = useAxios();
   const [formData, setFormData] = useState<any>();
   const [formResponse, setFormResponse] = useState<any>();
   const [answers, setAnswers] = useState<any>([]);

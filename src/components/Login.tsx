@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { HTTP_METHODS, REQUEST_FAILURE_MESSAGES, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS, SESSION_STORAGE_KEYS, UserLogin, UserRegister } from "../utils/constants";
+import { HTTP_METHODS, REQUEST_FAILURE_MESSAGES, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS, ROUTE_PATHS, SESSION_STORAGE_KEYS, UserLogin, UserRegister } from "../utils/constants";
 import { getCurrentDateTime, validateEmail } from "../utils/util";
 import "./Login.scss";
 import useAxios from "../utils/axios";
@@ -16,7 +16,7 @@ function Login() {
   const { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
   const { handleLogin } = useAuth();
   const location = useLocation();
-  const { from } = location.state || { from: { pathname: '/' } };
+  const { from } = location.state || { from: { pathname: ROUTE_PATHS.HOME } };
 
   const sendLoginRequest = async () => {
     const res = await HttpRequestController(REQUEST_URLS.LOGIN, HTTP_METHODS.POST, login);
@@ -96,7 +96,7 @@ function Login() {
               <input
                 type="number"
                 name="phone"
-                placeholder="phone number"
+                placeholder="Phone number"
                 onChange={(e) => {
                   setRegister({ ...register, phone: e.target.value });
                 }}

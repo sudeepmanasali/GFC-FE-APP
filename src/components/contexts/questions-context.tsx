@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import useAxios from "utils/axios";
-import { REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState, LOADING, INTERNAL_SERVER_ERROR, REQUEST_SUCCESS_MESSAGES } from "utils/constants";
+import { REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState, LOADING, INTERNAL_SERVER_ERROR, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES } from "utils/constants";
 import { Question } from "utils/Question";
 
 const DocumentContext = createContext<null | any>(null);
@@ -121,7 +121,10 @@ function reducer(state: any, action: any) {
         let currentQuestions = [...state.questions];
         currentQuestions.splice(queIdx, 1);
         let index = queIdx - 1 > 0 ? queIdx - 1 : 0;
-        currentQuestions[index].openAndCloseQuestion(true);
+
+        if (currentQuestions.length > 0) {
+          currentQuestions[index].openAndCloseQuestion(true);
+        }
         return {
           ...state,
           currQueIndex: index,
@@ -194,8 +197,6 @@ function reducer(state: any, action: any) {
         ...state,
         viewDocument: !state.viewDocument
       };
-    default:
-      throw new Error("Action unkonwn");
   }
 }
 
@@ -212,7 +213,7 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
   }
 
   useEffect(() => {
-    handlePromiseRequest(loadDocument, LOADING, REQUEST_SUCCESS_MESSAGES.QUESTIONS_LOADED_SUCCESSFULLY, INTERNAL_SERVER_ERROR);
+    handlePromiseRequest(loadDocument, LOADING, REQUEST_SUCCESS_MESSAGES.QUESTIONS_LOADED_SUCCESSFULLY, REQUEST_FAILURE_MESSAGES.QUESTIONS_LOADING_FAILED);
   }, []);
 
   return (
