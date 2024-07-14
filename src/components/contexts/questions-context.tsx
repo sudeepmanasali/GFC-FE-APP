@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import getUserInfo from "utils/auth-validate";
 import useAxios from "utils/axios";
 import { REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState, LOADING, INTERNAL_SERVER_ERROR, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES, SOCKET_CHANNEL_NAMES, ResponseData } from "utils/constants";
 import { Question } from "utils/Question";
@@ -206,7 +207,7 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
   let [formResponses, setFormResponses] = useState<ResponseData | any>([]);
   let [rows, setRows] = useState<ResponseData | any>([]);
   let { HttpRequestController, handlePromiseRequest, isRequestPending } = useAxios();
-
+  let { user } = getUserInfo();
   const [
     { questions, documentName, documentDescription, currQueIndex, currentFocusedQuestionId, viewDocument, createdByUserID }, dispatch
   ] = useReducer(reducer, initialState);
@@ -223,10 +224,10 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (viewDocument) {
+    if (createdByUserID === user.userId) {
       handlePromiseRequest(loadResponse, LOADING, REQUEST_SUCCESS_MESSAGES.RESPONSE_LOADED_SUCCESSFULLY, INTERNAL_SERVER_ERROR);
     }
-  }, [])
+  }, [createdByUserID])
 
   let idCounter = 0;
   // to create a new row, with new id
