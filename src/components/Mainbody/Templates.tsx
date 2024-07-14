@@ -7,7 +7,6 @@ import { IconButton } from "@mui/material";
 import useAxios from "../../utils/axios";
 import { HTTP_METHODS, REQUEST_FAILURE_MESSAGES, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
-import { getCurrentDateTime } from "../../utils/util";
 import getUserInfo from "../../utils/auth-validate";
 
 export function Templates() {
@@ -30,10 +29,7 @@ export function Templates() {
       documentName: "untitled-form",
       documentDescription: "Add Description",
       questions: defaultQuestions,
-      createdOn: getCurrentDateTime(),
-      createdBy: user.username,
-      createdByUserID: user.userId,
-      updatedOn: getCurrentDateTime(),
+      createdByUserID: user.userId
     });
     if (res) {
       navigate(`/forms/${res?.documentId}`, { state: { edit: true } });

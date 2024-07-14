@@ -40,8 +40,7 @@ export enum ROUTE_PATHS {
   HOME = '/',
   LOGIN = '/login',
   QUESTION_PAPER = '/forms/:documentId',
-  USERVIEW = '/viewform/:documentId',
-  USER_RESPONSE_VIEW = '/response-form/:userId/:documentId'
+  USERVIEW = '/viewform/:documentId'
 }
 
 export enum UPDATE_QUESTION_STATE {
@@ -87,7 +86,7 @@ export const SOCKET_CHANNEL_NAMES = {
 }
 
 export const REQUEST_SUCCESS_MESSAGES = {
-  RESPONSE_LOADED_SUCCESSFULLY: 'Response loaded successfully',
+  RESPONSE_LOADED_SUCCESSFULLY: 'Responses loaded successfully',
   LOGGED_IN_SUCCESSFULLY: 'Logged in successfully',
   USER_REGISTERED_SUCCESSFULLY: 'User registered successfully',
   DOCUMENT_DELETED_SUCCESSFULLY: 'Document deleted successfully',
@@ -188,6 +187,12 @@ export interface UndoRedoOperationItem {
 
 export interface Answers {
   [key: string]: any
+}
+
+export interface ResponseData {
+  id?: number,
+  username?: string,
+  submittedOn?: string
 }
 
 // constant variables

@@ -118,3 +118,31 @@
     margin: 25px 0;
   }
 }
+
+.response-dialog-box {
+  position: relative;
+  width: 40%;
+  height: 90vh;
+  overflow-y: scroll;
+  margin: $xl auto;
+  padding-top: $sm;
+  background-color: $main;
+  border-radius: $sm;
+  padding: $md;
+  background-color: rgb(228, 243, 229);
+
+  #simple-modal-title {
+    font-weight: 400;
+    text-align: center;
+  }
+
+  .btns {
+    @include flex-row;
+    justify-content: space-evenly;
+    margin: 25px 0;
+  }
+}
+
+.response-dialog-box::-webkit-scrollbar {
+  display: none;
+}

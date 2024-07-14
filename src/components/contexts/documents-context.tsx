@@ -1,8 +1,7 @@
-import { parseISO, compareDesc } from "date-fns";
 import { createContext, useContext, useEffect, useState } from "react";
 import getUserInfo from "utils/auth-validate";
 import useAxios from "utils/axios";
-import { REQUEST_URLS, HTTP_METHODS, INTERNAL_SERVER_ERROR, LOADING, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES } from "utils/constants";
+import { REQUEST_URLS, HTTP_METHODS, LOADING, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES } from "utils/constants";
 
 
 const DocumentsNameContext = createContext<null | any>(null);
@@ -14,17 +13,8 @@ const DocumentsNameContextProvider: React.FC<any> = ({ children }) => {
   const { user } = getUserInfo();
 
   const getDocuments = async () => {
-    let res = await HttpRequestController(REQUEST_URLS.GET_ALL_DOCUMENTS, HTTP_METHODS.POST, { username: user.username });
-    const getDateTime = (dateTimeStr: string): Date => {
-      return parseISO(dateTimeStr);
-    };
+    let res = await HttpRequestController(REQUEST_URLS.GET_ALL_DOCUMENTS, HTTP_METHODS.POST, { userId: user.userId });
 
-    // sorting the documents based on the updated time
-    res?.documents.sort((doc1: any, doc2: any) => {
-      const dateA = getDateTime(doc1.updatedOn);
-      const dateB = getDateTime(doc2.updatedOn);
-      return compareDesc(dateA, dateB);
-    });
     setFiles(res?.documents || []);
     setFilteredFiles(res?.documents || []);
   }

@@ -50,9 +50,7 @@ export default function CenteredTabs() {
           <TabPanel value={value} index={1}>
             <div className="user-response-container">
               <div className='header-title'>User Form Responses</div>
-              <div>
-                <DataTable />
-              </div>
+              <DataTable />
             </div>
           </TabPanel>
           <Divider />

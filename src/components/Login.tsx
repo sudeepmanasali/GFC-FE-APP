@@ -33,7 +33,7 @@ function Login() {
   }
 
   const sendRegisterRequest = async () => {
-    let payload = { ...register, createdOn: getCurrentDateTime() }
+    let payload = { ...register }
     const res = await HttpRequestController(REQUEST_URLS.REGISTER, HTTP_METHODS.POST, payload);
     if (res) {
       setIsLogin(true);

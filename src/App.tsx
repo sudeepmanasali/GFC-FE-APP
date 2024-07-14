@@ -1,5 +1,4 @@
 import './App.scss';
-import React from 'react';
 import { Header } from './components/Header/Header';
 import { Mainbody } from './components/Mainbody/Mainbody';
 import Templates from './components/Mainbody/Templates';
@@ -12,7 +11,6 @@ import { ThemeProvider } from './components/contexts/themeContext';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from 'components/contexts/auth-context';
 import { DocumentContextProvider } from 'components/contexts/questions-context';
-import { UserResponseView } from 'components/userview/UserResponseView';
 import { DocumentsNameContextProvider } from 'components/contexts/documents-context';
 
 function App() {
@@ -44,16 +42,6 @@ function App() {
                 <CenteredTabs />
               </ThemeProvider>
             </DocumentContextProvider>
-          ) : (
-            <Navigate
-              to={{ pathname: ROUTE_PATHS.LOGIN }}
-              state={{ from: location.pathname }}
-            />
-          )}
-          />
-
-          <Route path={ROUTE_PATHS.USER_RESPONSE_VIEW} element={isLoggedIn ? (
-            <UserResponseView />
           ) : (
             <Navigate
               to={{ pathname: ROUTE_PATHS.LOGIN }}

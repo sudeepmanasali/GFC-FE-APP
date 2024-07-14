@@ -1,25 +1,13 @@
 import * as React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import useAxios from 'utils/axios';
-import { HTTP_METHODS, INTERNAL_SERVER_ERROR, LOADING, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS, SOCKET_CHANNEL_NAMES } from 'utils/constants';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
-import socket from 'utils/SocketManager';
-import { Button } from '@mui/material';
-
-type ResponseData = {
-  id: number,
-  username: string,
-  submittedOn: string
-}
+import { Button, Modal } from '@mui/material';
+import { UserResponseView } from './UserResponseView';
+import { useDocument } from 'components/contexts/questions-context';
 
 export default function DataTable() {
-  const navigate = useNavigate();
-  let { HttpRequestController, handlePromiseRequest } = useAxios();
-  let routeParams = useParams();
-  let [isLoading, setLoading] = useState<boolean>(false);
-  let [formResponses, setFormResponses] = useState<ResponseData | any>([]);
-  let [rows, setRows] = useState<ResponseData | any>([]);
+  let { rows, formResponses, isRequestPending } = useDocument();
+  const [open, setOpen] = React.useState(false);
+  const [viewUserIdResponse, setViewUserIdResponse] = React.useState("");
 
   let columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', flex: 1 },
@@ -33,58 +21,52 @@ export default function DataTable() {
       sortable: false,
       renderCell: (params: any) => {
         const onClick = () => {
-          navigate(`/response-form/${formResponses[params.row.id - 1].userId}/${routeParams.documentId}`);
+          setViewUserIdResponse(formResponses[params.row.id - 1].userId._id);
+          handleOpen();
         };
         return <Button variant="contained" color='success' onClick={onClick}>View</Button>;
       }
     }
   ];
 
-
-  let idCounter = 0;
-  const createRow = (username: string, submittedOn: string) => {
-    return { id: ++idCounter, username, submittedOn };
+  const handleOpen = () => {
+    setOpen(true);
   };
 
-  const loadDocument = async () => {
-    setLoading(true);
-    let responseData = await HttpRequestController(REQUEST_URLS.USER_RESPONSE + `/${routeParams.documentId}`, HTTP_METHODS.GET);
-    let rowsData = responseData.formResponses.map((formResponse: any) => {
-      return createRow(formResponse.username, formResponse.submittedOn);
-    });
-    setFormResponses(responseData.formResponses);
-    setRows(rowsData);
-
-    // listening to get the user data
-    socket.on(SOCKET_CHANNEL_NAMES.USER_RESPONSE, (newData: any) => {
-      if (newData.documentId == routeParams.documentId) {
-        let newFormResponse = createRow(newData.username, newData.submittedOn);
-        setRows([...rowsData, newFormResponse]);
-      }
-    });
-    setLoading(false);
-  }
-
-  React.useEffect(() => {
-    handlePromiseRequest(loadDocument, LOADING, REQUEST_SUCCESS_MESSAGES.RESPONSE_LOADED_SUCCESSFULLY, INTERNAL_SERVER_ERROR);
-  }, []);
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
-    <div style={{ maxHeight: "1000", display: 'flex', justifyContent: 'center' }}>
-      <div style={{ width: '50%' }}>
-        {
-          !isLoading && (<DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 5 },
-              },
-            }}
-            pageSizeOptions={[5, 10]}
-          />)
-        }
+    <>
+      <div style={{ maxHeight: "1000", display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '50%' }}>
+          {
+            !isRequestPending && (<DataGrid
+              rows={rows}
+              columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 5 },
+                },
+              }}
+              pageSizeOptions={[5, 10]}
+            />)
+          }
+        </div>
       </div>
-    </div>
+      <div>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
+          <div className='response-dialog-box'>
+            <UserResponseView userId={viewUserIdResponse} />
+          </div>
+        </Modal>
+      </div>
+    </>
   );
 }

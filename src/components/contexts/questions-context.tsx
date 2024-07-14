@@ -1,8 +1,9 @@
-import { createContext, useContext, useReducer, useEffect } from "react";
+import { createContext, useContext, useReducer, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useAxios from "utils/axios";
-import { REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState, LOADING, INTERNAL_SERVER_ERROR, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES } from "utils/constants";
+import { REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState, LOADING, INTERNAL_SERVER_ERROR, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES, SOCKET_CHANNEL_NAMES, ResponseData } from "utils/constants";
 import { Question } from "utils/Question";
+import socket from "utils/SocketManager";
 
 const DocumentContext = createContext<null | any>(null);
 
@@ -23,9 +24,9 @@ function reducer(state: any, action: any) {
     case QUESTION_ACTION_TYPES.DOCUMENT_LOADED: {
       return {
         ...state,
-        documentName: action.payload.documentName,
-        documentDescription: action.payload.documentDescription,
-        questions: action.payload.questions.map((question: Question) => {
+        documentName: action.payload?.documentName,
+        documentDescription: action.payload?.documentDescription,
+        questions: action.payload?.questions.map((question: Question) => {
           question.open = false;
           return new Question(question);
         }),
@@ -202,25 +203,59 @@ function reducer(state: any, action: any) {
 
 const DocumentContextProvider: React.FC<any> = ({ children }) => {
   let params = useParams();
-  let { HttpRequestController, handlePromiseRequest } = useAxios();
+  let [formResponses, setFormResponses] = useState<ResponseData | any>([]);
+  let [rows, setRows] = useState<ResponseData | any>([]);
+  let { HttpRequestController, handlePromiseRequest, isRequestPending } = useAxios();
+
   const [
     { questions, documentName, documentDescription, currQueIndex, currentFocusedQuestionId, viewDocument, createdByUserID }, dispatch
   ] = useReducer(reducer, initialState);
 
   const loadDocument = async () => {
     let { document } = await HttpRequestController(REQUEST_URLS.GET_DOCUMENT + `/${params.documentId}`, HTTP_METHODS.GET);
-    dispatch({ type: QUESTION_ACTION_TYPES.DOCUMENT_LOADED, payload: document })
+    if (document) {
+      dispatch({ type: QUESTION_ACTION_TYPES.DOCUMENT_LOADED, payload: document });
+    }
   }
 
   useEffect(() => {
     handlePromiseRequest(loadDocument, LOADING, REQUEST_SUCCESS_MESSAGES.QUESTIONS_LOADED_SUCCESSFULLY, REQUEST_FAILURE_MESSAGES.QUESTIONS_LOADING_FAILED);
   }, []);
 
+  useEffect(() => {
+    if (viewDocument) {
+      handlePromiseRequest(loadResponse, LOADING, REQUEST_SUCCESS_MESSAGES.RESPONSE_LOADED_SUCCESSFULLY, INTERNAL_SERVER_ERROR);
+    }
+  }, [])
+
+  let idCounter = 0;
+  // to create a new row, with new id
+  const createRow = (username: string, submittedOn: string) => {
+    return { id: ++idCounter, username, submittedOn };
+  };
+
+  const loadResponse = async () => {
+    let responseData = await HttpRequestController(REQUEST_URLS.USER_RESPONSE + `/${params.documentId}`, HTTP_METHODS.GET);
+    let rowsData = responseData.formResponses.map((formResponse: any) => {
+      return createRow(formResponse.userId.username, formResponse.submittedOn);
+    });
+    setFormResponses(responseData.formResponses);
+    setRows(rowsData);
+
+    // listening to get the user data
+    socket.on(SOCKET_CHANNEL_NAMES.USER_RESPONSE, (newData: any) => {
+      if (newData.documentId == params.documentId) {
+        let newFormResponse = createRow(newData.username, newData.submittedOn);
+        setRows([...rowsData, newFormResponse]);
+      }
+    });
+  }
+
   return (
     <DocumentContext.Provider
       value={{
         questions, documentDescription, documentName, currQueIndex, currentFocusedQuestionId, viewDocument, createdByUserID,
-        dispatch
+        dispatch, isRequestPending, rows, formResponses
       }}
     >
       {children}

@@ -89,11 +89,7 @@ export function QuestionForm() {
     if (checkAllRequiredQuestionsAreAnswered()) {
       let payload = {
         documentId: params.documentId,
-        documentName,
-        documentDescription,
         answers,
-        submittedOn: getCurrentDateTime(),
-        username: user.username,
         userId: user.userId
       }
       await HttpRequestController(`${REQUEST_URLS.USER_RESPONSE}/${params.documentId}`, HTTP_METHODS.POST, payload);
@@ -319,7 +315,7 @@ export function QuestionForm() {
         </Tooltip>)
       }
 
-      {viewDocument && (
+      {user.userId === createdByUserID && viewDocument && (
         <div className="back-button">
           <Tooltip title="Go Back">
             <ArrowBackIosNewIcon className="edit-question-paper-icon" onClick={() => {
