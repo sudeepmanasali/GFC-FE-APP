@@ -12,8 +12,7 @@ const useAxios = () => {
 
   // method to handle all type of api request ( GET, POST, PUT, DELETE )
   const HttpRequestController = async (path: string, method = HTTP_METHODS.GET, payload: any = null) => {
-    // let url = 'https://gfc-be-app.onrender.com' + path;
-    let url = 'http://localhost:9000' + path;
+    let url = 'https://gfc-be-app.onrender.com' + path;
 
     // headers are set here, retrieves the jwt token from local storage 
     let headers = {
