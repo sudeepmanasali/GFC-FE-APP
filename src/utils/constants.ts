@@ -108,6 +108,7 @@ export const REQUEST_FAILURE_MESSAGES = {
   QUESTIONS_LOADING_FAILED: 'Unable to load the questions',
   SAVING_QUESTIONS_FAILED: 'Unable to save the questions',
   SAVING_USER_RESPONSE_FAILED: 'Unable to save the user response',
+  PLEASE_ANSWER_ALL_REQUIRED_QUESTIONS: 'Please answer all required questions'
 }
 
 // interfaces

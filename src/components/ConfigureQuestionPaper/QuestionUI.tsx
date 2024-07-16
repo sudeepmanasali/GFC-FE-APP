@@ -99,7 +99,11 @@ export function QuestionForm() {
   }
 
   const submitUserResponse = () => {
-    handlePromiseRequest(saveUserResponse, SAVING, REQUEST_SUCCESS_MESSAGES.REQUEST_SAVED_SUCCESSFULLY, REQUEST_FAILURE_MESSAGES.SAVING_USER_RESPONSE_FAILED)
+    if (checkAllRequiredQuestionsAreAnswered()) {
+      handlePromiseRequest(saveUserResponse, SAVING, REQUEST_SUCCESS_MESSAGES.REQUEST_SAVED_SUCCESSFULLY, REQUEST_FAILURE_MESSAGES.SAVING_USER_RESPONSE_FAILED)
+    } else {
+      toast.error(REQUEST_FAILURE_MESSAGES.PLEASE_ANSWER_ALL_REQUIRED_QUESTIONS);
+    }
   }
 
   const isElementBoxVisible = (): boolean => {

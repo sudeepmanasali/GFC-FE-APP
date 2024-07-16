@@ -12,7 +12,7 @@ export const UserResponseView: React.FC<any> = ({ userId }) => {
   const params = useParams();
   const { HttpRequestController, handlePromiseRequest } = useAxios();
   const [formData, setFormData] = useState<any>();
-  const [answers, setAnswers] = useState<any>([]);
+  const [answers, setAnswers] = useState<any>({});
 
   const loadResponse = async () => {
     let formResponse = await HttpRequestController(REQUEST_URLS.USER_RESPONSE + `/${userId}` + `/${params.documentId}`,
@@ -63,7 +63,7 @@ export const UserResponseView: React.FC<any> = ({ userId }) => {
                   <Typography className="question-text">
                     {((index + 1).toString() + ". " + question.question).trim()}
                   </Typography>
-                  <DisplayOption question={question} showQuestionPaper={false} onChange={() => { }} answered={answers ? answers.answers[question._id] : undefined} />
+                  <DisplayOption question={question} showQuestionPaper={false} onChange={() => { }} answered={Object.keys(answers).length > 0 && answers.answers ? answers.answers[question._id] : undefined} />
                 </div>
               </div>
             })
