@@ -12,45 +12,55 @@ import { Toaster } from 'react-hot-toast';
 import { useAuth } from 'components/contexts/auth-context';
 import { DocumentContextProvider } from 'components/contexts/questions-context';
 import { DocumentsNameContextProvider } from 'components/contexts/documents-context';
+import { GuideProvider } from 'components/contexts/guide-context';
 
 function App() {
+  // true if user is logged in
   let { isLoggedIn } = useAuth();
 
   return (
     <div style={{ overflow: 'hidden' }}>
       <BrowserRouter>
-        <Routes>
-          <Route path={ROUTE_PATHS.LOGIN}
-            element={!isLoggedIn ? (<Login />) : (
-              <Navigate to={ROUTE_PATHS.HOME} replace />
-            )} />
+        <GuideProvider>
+          <Routes>
+            {/* login and register page  */}
+            <Route path={ROUTE_PATHS.LOGIN}
+              element={!isLoggedIn ? (<Login />) : (
+                <Navigate to={ROUTE_PATHS.HOME} replace />
+              )} />
 
-          <Route path={ROUTE_PATHS.HOME} element={isLoggedIn ? (
-            <DocumentsNameContextProvider>
-              <Header />
-              <Templates />
-              <Mainbody />
-            </DocumentsNameContextProvider>
-          ) : (
-            <Navigate to={ROUTE_PATHS.LOGIN} replace />
-          )}
-          />
-          <Route path={ROUTE_PATHS.QUESTION_PAPER} element={isLoggedIn ? (
-            <DocumentContextProvider>
-              <ThemeProvider>
-                <FormHeader />
-                <CenteredTabs />
-              </ThemeProvider>
-            </DocumentContextProvider>
-          ) : (
-            <Navigate
-              to={{ pathname: ROUTE_PATHS.LOGIN }}
-              state={{ from: location.pathname }}
+            {/* main page to display templates and documents  */}
+            <Route path={ROUTE_PATHS.HOME} element={isLoggedIn ? (
+              <DocumentsNameContextProvider>
+                <Header />
+                <Templates />
+                <Mainbody />
+              </DocumentsNameContextProvider>
+            ) : (
+              <Navigate to={ROUTE_PATHS.LOGIN} replace />
+            )}
             />
-          )}
-          />
-          <Route path={"*"} element={<Navigate to={ROUTE_PATHS.LOGIN} replace />}></Route>
-        </Routes>
+
+            {/* displays the document questions */}
+            <Route path={ROUTE_PATHS.QUESTION_PAPER} element={isLoggedIn ? (
+              <DocumentContextProvider>
+                <ThemeProvider>
+                  <FormHeader />
+                  <CenteredTabs />
+                </ThemeProvider>
+              </DocumentContextProvider>
+            ) : (
+              <Navigate
+                to={{ pathname: ROUTE_PATHS.LOGIN }}
+                state={{ from: location.pathname }}
+              />
+            )}
+            />
+
+            {/* navigates to home page if user visits invalid route */}
+            <Route path={"*"} element={<Navigate to={ROUTE_PATHS.LOGIN} replace />}></Route>
+          </Routes>
+        </GuideProvider>
       </BrowserRouter >
       <Toaster />
     </div >

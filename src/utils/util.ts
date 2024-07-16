@@ -11,6 +11,7 @@ export function a11yProps(index: number) {
   };
 }
 
+// validates the email id
 export const validateEmail = (email: string) => {
   return String(email)
     .toLowerCase()
@@ -19,6 +20,7 @@ export const validateEmail = (email: string) => {
     );
 };
 
+// used to create random string based on the requested length
 export function createRandomString(length: number) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
@@ -28,6 +30,7 @@ export function createRandomString(length: number) {
   return result;
 }
 
+// returns current date time
 export const getCurrentDateTime = (): string => {
   const today = new Date();
   const year = today.getFullYear();
@@ -40,6 +43,7 @@ export const getCurrentDateTime = (): string => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
+// returns if question type is multiple section or multiple choice
 export const isSelectionType = (questionType: QUESTION_TYPES): boolean => {
   let selectionTypes = [QUESTION_TYPES.RADIO, QUESTION_TYPES.CHECKBOX];
   return selectionTypes.includes(questionType);

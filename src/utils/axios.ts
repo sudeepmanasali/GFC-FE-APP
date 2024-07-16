@@ -6,9 +6,16 @@ import { useState } from 'react';
 // custom hook to handle the requests
 const useAxios = () => {
   type errorType = AxiosError | any;
+
+  // used to know whether the request is completed or not
   const [isRequestPending, setIsRequestPending] = useState(false);
+
+  // method to handle all type of api request ( GET, POST, PUT, DELETE )
   const HttpRequestController = async (path: string, method = HTTP_METHODS.GET, payload: any = null) => {
-    let url = 'https://gfc-be-app.onrender.com' + path;
+    // let url = 'https://gfc-be-app.onrender.com' + path;
+    let url = 'http://localhost:9000' + path;
+
+    // headers are set here, retrieves the jwt token from local storage 
     let headers = {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem(SESSION_STORAGE_KEYS.TOKEN)
@@ -47,6 +54,7 @@ const useAxios = () => {
     }
   };
 
+  // handles the error, if api request fails for any reason
   const handleRequestError = (error: errorType) => {
     if (axios.isAxiosError(error)) {
       if (error.response)
@@ -62,7 +70,10 @@ const useAxios = () => {
     throw new Error(error.message);
   };
 
-  const handlePromiseRequest = (method: Function, loadingMessage: string, successMessage: string, errorMessage: string): void => {
+  // handling the api request, and showing the 
+  // success or error message after the request is completed
+  const handlePromiseRequest = (method: Function, loadingMessage: string,
+    successMessage: string, errorMessage: string): void => {
     toast.promise(
       method(),
       {

@@ -1,12 +1,14 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { memo } from "react";
 import MoreVertSharpIcon from '@mui/icons-material/MoreVertSharp';
 import StorageSharpIcon from '@mui/icons-material/StorageSharp';
 import formimage from "../../assets/images/t-shirt.png";
 import "./Mainbody.scss"
 
-export const Card: React.FC<any> = ({ document, openForm }) => {
+// displaying document name, created time on home page
+export const Card: React.FC<any> = memo(({ document, openForm }) => {
   return <div className="doc-card" onClick={() => {
+
+    // opens the document
     openForm(document._id);
   }}>
     <img src={formimage} alt="no-image" className="doc-image"></img>
@@ -26,4 +28,4 @@ export const Card: React.FC<any> = ({ document, openForm }) => {
       </div>
     </div>
   </div>
-}
+});

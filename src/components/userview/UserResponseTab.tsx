@@ -29,6 +29,7 @@ export default function DataTable() {
     }
   ];
 
+  // to open and close the reponse modal
   const handleOpen = () => {
     setOpen(true);
   };
@@ -56,6 +57,7 @@ export default function DataTable() {
         </div>
       </div>
       <div>
+        {/* displays the user reponse on click of view button from the table */}
         <Modal
           open={open}
           onClose={handleClose}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import "./QuestionUI.scss";
 import { Typography } from "@mui/material";
 import { QUESTION_TYPES, Question } from "../../utils/constants";
@@ -10,7 +10,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 type propsType = { questionIndex: number, showQuestionPaper: boolean, question: Question, onChange: Function };
 
-export const DisplayQuestion: React.FC<propsType> = ({ questionIndex, question, showQuestionPaper, onChange }) => {
+export const DisplayQuestion: React.FC<propsType> = memo(({ questionIndex, question, showQuestionPaper, onChange }) => {
   return <div className="saved-questions">
     <Typography className="question-text">
       {(questionIndex + 1).toString() + ". " + question.question}
@@ -26,7 +26,7 @@ export const DisplayQuestion: React.FC<propsType> = ({ questionIndex, question, 
       }
     </div>
   </div>
-}
+});
 
 const DisplayOption: React.FC<any> = ({ question, showQuestionPaper, onChange }) => {
   switch (question.questionType) {

@@ -6,6 +6,8 @@ import "./Alert.scss";
 import { QuestionForm } from '../ConfigureQuestionPaper/QuestionUI';
 import { useDocument } from 'components/contexts/questions-context';
 import DataTable from 'components/userview/UserResponseTab';
+import Tour from 'reactour';
+import { useGuide } from 'components/contexts/guide-context';
 
 function TabPanel(props: any) {
   const { children, value, index, ...other } = props;
@@ -26,7 +28,9 @@ TabPanel.propTypes = {
 export default function CenteredTabs() {
   const [value, setValue] = React.useState(0);
   const { viewDocument } = useDocument();
+  const { guideTour, closeTour, documentPageGuide } = useGuide();
 
+  // used to change the tabs view
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
   };
@@ -50,6 +54,7 @@ export default function CenteredTabs() {
           <TabPanel value={value} index={1}>
             <div className="user-response-container">
               <div className='header-title'>User Form Responses</div>
+              {/* Display the user responses  */}
               <DataTable />
             </div>
           </TabPanel>
@@ -61,6 +66,16 @@ export default function CenteredTabs() {
       display below compoent here */}
       {
         viewDocument && (<QuestionForm />)
+      }
+
+      {/* avoid displaying the tour when the document, is in preview mode */}
+      {
+        !viewDocument && (<Tour
+          steps={documentPageGuide}
+          isOpen={guideTour}
+          onRequestClose={closeTour}
+          accentColor="#5cb7b7"
+        />)
       }
     </div>
   )

@@ -29,6 +29,7 @@ export const UserResponseView: React.FC<any> = ({ userId }) => {
     });
   }
 
+  // loads the user reponse
   useEffect(() => {
     handlePromiseRequest(loadResponse, LOADING, REQUEST_SUCCESS_MESSAGES.RESPONSE_LOADED_SUCCESSFULLY, INTERNAL_SERVER_ERROR);
   }, []);
@@ -73,6 +74,7 @@ export const UserResponseView: React.FC<any> = ({ userId }) => {
   </div>
 }
 
+// displaying the options and the response given by the user
 const DisplayOption: React.FC<any> = ({ question, showQuestionPaper, onChange, answered }) => {
   switch (question.questionType) {
     case QUESTION_TYPES.RADIO: {

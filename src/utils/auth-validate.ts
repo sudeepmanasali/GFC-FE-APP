@@ -15,6 +15,7 @@ export function validateTokenAge() {
   return true;
 }
 
+// returns the user info by decoding the jwt token 
 export default function getUserInfo() {
   let user: any, jwt;
   try {

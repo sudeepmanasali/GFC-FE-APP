@@ -2,12 +2,17 @@ import { createContext, useContext, useReducer, useEffect, useState } from "reac
 import { useParams } from "react-router-dom";
 import getUserInfo from "utils/auth-validate";
 import useAxios from "utils/axios";
-import { REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState, LOADING, INTERNAL_SERVER_ERROR, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES, SOCKET_CHANNEL_NAMES, ResponseData } from "utils/constants";
+import {
+  REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState,
+  LOADING, INTERNAL_SERVER_ERROR, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES,
+  SOCKET_CHANNEL_NAMES, ResponseData
+} from "utils/constants";
 import { Question } from "utils/Question";
 import socket from "utils/SocketManager";
 
 const DocumentContext = createContext<null | any>(null);
 
+// initial state of the document
 const initialState: DocumentInitialState = {
   questions: [],
   documentName: "",
@@ -18,10 +23,12 @@ const initialState: DocumentInitialState = {
   createdByUserID: ''
 };
 
+// updated the state based on the user actions
 function reducer(state: any, action: any) {
   let queIdx = action.payload?.questionIndex;
 
   switch (action.type) {
+    // 
     case QUESTION_ACTION_TYPES.DOCUMENT_LOADED: {
       return {
         ...state,
@@ -36,6 +43,7 @@ function reducer(state: any, action: any) {
       };
     }
 
+    // closes the focused question box
     case QUESTION_ACTION_TYPES.CLOSE_EXPANDED_QUESTIONS:
       return {
         ...state,
@@ -45,6 +53,7 @@ function reducer(state: any, action: any) {
         })
       };
 
+    // opens the focused question box
     case QUESTION_ACTION_TYPES.EXPAND_QUESTION:
       return {
         ...state,
@@ -55,6 +64,7 @@ function reducer(state: any, action: any) {
         currentFocusedQuestionId: state.questions[queIdx]._id
       };
 
+    // updates the question
     case QUESTION_ACTION_TYPES.UPDATE_QUESTION:
       {
         let questionText = action.payload.questionText;
@@ -68,6 +78,7 @@ function reducer(state: any, action: any) {
         };
       }
 
+    // adds new option to the question
     case QUESTION_ACTION_TYPES.ADD_NEW_OPTION:
       {
         let currentQuestions = [...state.questions];
@@ -80,6 +91,7 @@ function reducer(state: any, action: any) {
         };
       }
 
+    // remove the option from a question  
     case QUESTION_ACTION_TYPES.REMOVE_OPTION:
       {
         let optIndex = action.payload.optionIndex;
@@ -93,6 +105,7 @@ function reducer(state: any, action: any) {
         };
       }
 
+    // adds new question to the document
     case QUESTION_ACTION_TYPES.ADD_NEW_QUESTION:
       {
         let currentQuestions = [...state.questions];
@@ -106,6 +119,7 @@ function reducer(state: any, action: any) {
         };
       }
 
+    // updating the question type like radio, checkbox, text, date and time
     case QUESTION_ACTION_TYPES.UPDATE_QUESTION_TYPE:
       {
         let currentQuestions = [...state.questions];
@@ -118,6 +132,7 @@ function reducer(state: any, action: any) {
         };
       }
 
+    // deletes the question
     case QUESTION_ACTION_TYPES.DELETE_QUESTION:
       {
         let currentQuestions = [...state.questions];
@@ -135,6 +150,7 @@ function reducer(state: any, action: any) {
         };
       }
 
+    // copies the question
     case QUESTION_ACTION_TYPES.COPY_QUESTION:
       {
         let currentQuestions = [...state.questions];
@@ -148,6 +164,7 @@ function reducer(state: any, action: any) {
         };
       }
 
+    // sets question is required or not
     case QUESTION_ACTION_TYPES.TOGGLE_REQUIRED:
       {
         let currentQuestions = [...state.questions];
@@ -160,6 +177,7 @@ function reducer(state: any, action: any) {
         };
       }
 
+    // updated the option value for checkbox and radio type options
     case QUESTION_ACTION_TYPES.HANDLE_OPTION_VALUE:
       {
         let optionValue = action.payload.optionValue;
@@ -174,6 +192,7 @@ function reducer(state: any, action: any) {
         };
       }
 
+    // on drag and drop action it will update the sequence of questions
     case QUESTION_ACTION_TYPES.REORDER_QUESTIONS:
       {
         return {
@@ -182,18 +201,22 @@ function reducer(state: any, action: any) {
         };
       }
 
+    // updates the document name
     case QUESTION_ACTION_TYPES.UPDATE_DOCUMENT_NAME:
       return {
         ...state,
         documentName: action.payload.documentName
       };
 
+    // updates the document description
     case QUESTION_ACTION_TYPES.UPDATE_DOCUMENT_DESCRIPTION:
       return {
         ...state,
         documentDescription: action.payload.documentDescription
       };
 
+    // updates the viewDocument property
+    // when viewDocument is true, the question boxes will not be editable and toolmbox will not be visible
     case QUESTION_ACTION_TYPES.VIEW_DOCUMENT:
       return {
         ...state,
@@ -202,6 +225,7 @@ function reducer(state: any, action: any) {
   }
 }
 
+// provides the document data and document responses to the child components
 const DocumentContextProvider: React.FC<any> = ({ children }) => {
   let params = useParams();
   let [formResponses, setFormResponses] = useState<ResponseData | any>([]);
@@ -212,6 +236,7 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
     { questions, documentName, documentDescription, currQueIndex, currentFocusedQuestionId, viewDocument, createdByUserID }, dispatch
   ] = useReducer(reducer, initialState);
 
+  // loades the document questions and options
   const loadDocument = async () => {
     let { document } = await HttpRequestController(REQUEST_URLS.GET_DOCUMENT + `/${params.documentId}`, HTTP_METHODS.GET);
     if (document) {
@@ -224,6 +249,8 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    // when the user opens the document which is not created by him, then it
+    // will not retreive the responses for that document
     if (createdByUserID === user.userId) {
       handlePromiseRequest(loadResponse, LOADING, REQUEST_SUCCESS_MESSAGES.RESPONSE_LOADED_SUCCESSFULLY, INTERNAL_SERVER_ERROR);
     }
@@ -243,7 +270,8 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
     setFormResponses(responseData.formResponses);
     setRows(rowsData);
 
-    // listening to get the user data
+    // when ever other users submit the response for this document
+    // lively it will update the table with new row 
     socket.on(SOCKET_CHANNEL_NAMES.USER_RESPONSE, (newData: any) => {
       if (newData.documentId == params.documentId) {
         let newFormResponse = createRow(newData.username, newData.submittedOn);

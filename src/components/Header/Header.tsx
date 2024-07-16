@@ -1,15 +1,20 @@
 import AppsIcon from '@mui/icons-material/Apps';
 import SearchIcon from '@mui/icons-material/Search';
 import { IconButton } from "@mui/material";
-import React from "react";
+import React, { memo } from "react";
 import formimage from "../../assets/images/forms-icon.png";
 import "./Header.scss"
 import TemporaryDrawer from '../Sidenav/Drawer';
 import ProfileButton from 'components/common/Dropdown';
 import { useDocumentsName } from 'components/contexts/documents-context';
+import { useGuide } from 'components/contexts/guide-context';
+import Tour from 'reactour';
 
-export const Header = () => {
+// Header displayed on home page
+export const Header = memo(() => {
   const { filterFiles } = useDocumentsName();
+  const { guideTour, closeTour, homePageGuide } = useGuide();
+
   return <div className="header">
     <div className="header-info">
       <TemporaryDrawer />
@@ -28,5 +33,11 @@ export const Header = () => {
       </IconButton>
       <ProfileButton />
     </div>
+    <Tour
+      steps={homePageGuide}
+      isOpen={guideTour}
+      onRequestClose={closeTour}
+      accentColor="#5cb7b7"
+    />
   </div>
-}
+});

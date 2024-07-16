@@ -10,9 +10,12 @@ import { useNavigate } from "react-router-dom";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 export const Mainbody = () => {
+  // view document list in table or like files
   const [type, setType] = useState(FOLDER_VIEW_TYPE.FILE);
   const { filteredFiles } = useDocumentsName();
   const navigate = useNavigate();
+
+  // opesn the document
   const openForm = (documentId: string) => {
     navigate(`/forms/${documentId}`, { state: { edit: true } });
   }
@@ -34,6 +37,7 @@ export const Mainbody = () => {
         const onClick = () => {
           openForm(filteredFiles[params.row.id - 1]._id);
         };
+        // button to open the document
         return <Button variant="contained" color="primary" onClick={onClick}>open</Button>;
       }
     }
@@ -44,6 +48,7 @@ export const Mainbody = () => {
     filteredFiles.map((element: any, index: number) => {
       return data.push({ "id": index + 1, "documentName": element.documentName, "createdOn": element.createdOn, "updatedOn": element.updatedOn });
     });
+    // showing the filtered files
     setRows(data);
   }, [filteredFiles]);
 
@@ -67,6 +72,7 @@ export const Mainbody = () => {
       </div>
     </div>
 
+    {/* document details will be displayed like files  */}
     {type == FOLDER_VIEW_TYPE.FILE && (
       <div className="docs-container">
         {filteredFiles && filteredFiles.length > 0 ? (
@@ -79,6 +85,7 @@ export const Mainbody = () => {
       </div>
     )}
 
+    {/* document details will be displayed inside table  */}
     {type == FOLDER_VIEW_TYPE.ROWS && (
       <div style={{ maxHeight: "1000", display: 'flex', justifyContent: 'center' }}>
         <div style={{ width: '100%' }}>

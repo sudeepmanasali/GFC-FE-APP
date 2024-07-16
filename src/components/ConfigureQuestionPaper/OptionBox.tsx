@@ -3,7 +3,7 @@ import { Tooltip, IconButton, Button } from "@mui/material";
 import { QUESTION_ACTION_TYPES, QUESTION_TYPES } from "../../utils/constants";
 import CropOriginalIcon from '@mui/icons-material/CropOriginal';
 import CloseIcon from '@mui/icons-material/Close';
-import React from "react";
+import React, { memo } from "react";
 import "./QuestionUI.scss";
 import { isSelectionType } from "../../utils/util";
 import { useDocument } from "components/contexts/questions-context";
@@ -15,7 +15,7 @@ interface PropsType {
   question: Question
 };
 
-export const OptionBox: React.FC<PropsType> = ({ questionIndex, question }) => {
+export const OptionBox: React.FC<PropsType> = memo(({ questionIndex, question }) => {
 
   let { dispatch } = useDocument();
   let IconMap = new Map();
@@ -105,4 +105,4 @@ export const OptionBox: React.FC<PropsType> = ({ questionIndex, question }) => {
       </div>
     )}
   </>
-}
+});

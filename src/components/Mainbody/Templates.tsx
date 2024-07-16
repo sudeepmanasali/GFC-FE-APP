@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Templates.scss";
 import blank from "../../assets/images/forms-blank-googlecolors.png";
 import UnfoldMoreSharpIcon from '@mui/icons-material/UnfoldMoreSharp';
@@ -9,10 +9,13 @@ import { HTTP_METHODS, REQUEST_FAILURE_MESSAGES, REQUEST_IN_PROGRESS, REQUEST_SU
 import { useNavigate } from "react-router-dom";
 import getUserInfo from "../../utils/auth-validate";
 
+// template documents displayed below the header in home page
 export function Templates() {
   let { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
   let navigate = useNavigate();
   let { user } = getUserInfo();
+
+  // default questions to create new document
   let defaultQuestions = [
     {
       question: "Question",
@@ -24,6 +27,8 @@ export function Templates() {
       required: false
     },
   ];
+
+  // method to create new document
   const sendRequestToCreateForm = async (): Promise<void> => {
     let res = await HttpRequestController(REQUEST_URLS.CREATE_NEW_DOCUMENT, HTTP_METHODS.POST, {
       documentName: "untitled-form",
@@ -32,10 +37,12 @@ export function Templates() {
       createdByUserID: user.userId
     });
     if (res) {
+      // if form created successfully it will navigate to nextpage
       navigate(`/forms/${res?.documentId}`, { state: { edit: true } });
     }
   }
 
+  // creates the new document with default name, description and questions
   const createform = (e: any): void => {
     e.preventDefault();
     handlePromiseRequest(sendRequestToCreateForm, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES.DOCUMENT_CREATED_SUCCESSFULLY,

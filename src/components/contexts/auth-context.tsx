@@ -11,6 +11,7 @@ export const useAuth = () => {
   return context;
 };
 
+// provides the authorisation details, login and logout methods
 export const AuthProvider: React.FC<any> = ({ children }) => {
   const [isLoggedIn, setIsLogged] = useState(localStorage.getItem(SESSION_STORAGE_KEYS.IS_AUTH) == 'true');
 

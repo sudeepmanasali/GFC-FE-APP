@@ -3,6 +3,7 @@ import { Option, QUESTION_TYPES } from "./constants";
 import { createRandomString, isSelectionType } from "./util";
 import { ObjectId } from 'bson';
 
+// data structure to create the question
 export class Question {
   public question: string;
   public questionType: QUESTION_TYPES;
@@ -24,6 +25,7 @@ export class Question {
     this.points = 4;
   }
 
+  // if open is true then question will be editable
   openAndCloseQuestion(value: boolean): Question {
     this.open = value;
     return this;

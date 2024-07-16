@@ -14,6 +14,7 @@ import excelsheetimage from "../../assets/images/google-sheets.png";
 import slidesimage from "../../assets/images/google-slides.png";
 import "./Drawer.scss";
 
+// component to display the side nav bar
 export default function TemporaryDrawer() {
 
   const [state, setState] = useState({

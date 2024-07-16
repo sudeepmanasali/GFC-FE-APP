@@ -287,6 +287,7 @@ export function QuestionForm() {
 
           <div className="save-form">
             <Button
+              className="save-button"
               variant="contained"
               color="success"
               disabled={isRequestPending}
@@ -298,7 +299,7 @@ export function QuestionForm() {
         {
           !viewDocument && (<div className="question-edit" style={{ top: `${yoffset}px` }}>
             <Tooltip title="Add question" placement="right">
-              <AddCircleOutlineIcon className="edit" onClick={() => addQuestionTemplate()} />
+              <AddCircleOutlineIcon className="edit add-question-btn" onClick={() => addQuestionTemplate()} />
             </Tooltip>
             <OndemandVideoIcon className="edit" />
             <CropOriginalIcon className="edit" />

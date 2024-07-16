@@ -120,7 +120,7 @@ function FormHeader() {
 
               <Tooltip title="Preview">
                 <IconButton onClick={openQuestionPaper}>
-                  <RemoveRedEyeIcon className="form-header-icon" />
+                  <RemoveRedEyeIcon className="form-header-icon preview" />
                 </IconButton>
               </Tooltip>
 
@@ -141,7 +141,7 @@ function FormHeader() {
                 <IconButton onClick={() => {
                   handleOpen();
                 }}>
-                  <DeleteIcon className="form-header-icon" />
+                  <DeleteIcon className="form-header-icon delete" />
                 </IconButton>
               </Tooltip>
 
