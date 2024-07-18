@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { SESSION_STORAGE_KEYS } from 'utils/constants';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { validateTokenAge } from 'utils/auth-validate';
+import { ROUTE_PATHS, SESSION_STORAGE_KEYS } from 'utils/constants';
 
 const GuideContext = createContext<any>(undefined);
 
@@ -57,6 +58,7 @@ const documentPageGuide = [
 const GuideProvider: React.FC<any> = ({ children }) => {
   const [guideTour, setGuideTour] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // check whether the current page tour is completed or not
@@ -71,8 +73,10 @@ const GuideProvider: React.FC<any> = ({ children }) => {
       [window.location.pathname]: true
     }));
 
+    if (!validateTokenAge()) {
+      navigate(ROUTE_PATHS.LOGIN);
+    }
   }, [location]);
-
 
   // stop the guide tour
   const closeTour = () => {

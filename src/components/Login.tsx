@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { HTTP_METHODS, REQUEST_FAILURE_MESSAGES, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS, ROUTE_PATHS, SESSION_STORAGE_KEYS, UserLogin, UserRegister } from "../utils/constants";
-import { getCurrentDateTime, validateEmail } from "../utils/util";
+import { validateEmail } from "../utils/util";
 import "./Login.scss";
 import useAxios from "../utils/axios";
 import toast from "react-hot-toast";
@@ -18,17 +18,21 @@ function Login() {
   const location = useLocation();
   const { from } = location.state || { from: { pathname: ROUTE_PATHS.HOME } };
 
+  const setLocalStorageData = (response: any) => {
+    localStorage.setItem(SESSION_STORAGE_KEYS.TOKEN, response.token);
+    localStorage.setItem(SESSION_STORAGE_KEYS.EMAIL, response.data.email);
+    localStorage.setItem(SESSION_STORAGE_KEYS.USER_ID, response.data.userId);
+    localStorage.setItem(SESSION_STORAGE_KEYS.USERNAME, response.data.username);
+    localStorage.setItem(SESSION_STORAGE_KEYS.IS_AUTH, 'true');
+    navigate(from, { replace: true });
+    handleLogin(true);
+  }
+
   const sendLoginRequest = async () => {
     const res = await HttpRequestController(REQUEST_URLS.LOGIN, HTTP_METHODS.POST, login);
     if (res) {
-      localStorage.setItem(SESSION_STORAGE_KEYS.TOKEN, res.token);
-      localStorage.setItem(SESSION_STORAGE_KEYS.EMAIL, res.data.email);
-      localStorage.setItem(SESSION_STORAGE_KEYS.USER_ID, res.data.userId);
-      localStorage.setItem(SESSION_STORAGE_KEYS.USERNAME, res.data.username);
-      localStorage.setItem(SESSION_STORAGE_KEYS.IS_AUTH, 'true');
-      navigate(from, { replace: true });
+      setLocalStorageData(res);
       setLogin({});
-      handleLogin(true);
     }
   }
 
@@ -36,7 +40,7 @@ function Login() {
     let payload = { ...register }
     const res = await HttpRequestController(REQUEST_URLS.REGISTER, HTTP_METHODS.POST, payload);
     if (res) {
-      setIsLogin(true);
+      setLocalStorageData(res);
       setRegister({});
     }
   }
