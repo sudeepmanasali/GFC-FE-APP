@@ -48,3 +48,15 @@ export const isSelectionType = (questionType: QUESTION_TYPES): boolean => {
   let selectionTypes = [QUESTION_TYPES.RADIO, QUESTION_TYPES.CHECKBOX];
   return selectionTypes.includes(questionType);
 }
+
+// delay the execution of a function untill a certain amount of time passed
+export const debounce = function (func: Function, delay: number) {
+  let timer: NodeJS.Timeout;
+  return function (this: any, ...args: any[]) {
+    let context = this;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  }
+}

@@ -22,44 +22,46 @@ function App() {
     <div style={{ overflow: 'hidden' }}>
       <BrowserRouter>
         <GuideProvider>
-          <Routes>
-            {/* login and register page  */}
-            <Route path={ROUTE_PATHS.LOGIN}
-              element={!isLoggedIn ? (<Login />) : (
-                <Navigate to={ROUTE_PATHS.HOME} replace />
-              )} />
+          <DocumentsNameContextProvider>
+            <Routes>
+              {/* login and register page  */}
+              <Route path={ROUTE_PATHS.LOGIN}
+                element={!isLoggedIn ? (<Login />) : (
+                  <Navigate to={ROUTE_PATHS.HOME} replace />
+                )} />
 
-            {/* main page to display templates and documents  */}
-            <Route path={ROUTE_PATHS.HOME} element={isLoggedIn ? (
-              <DocumentsNameContextProvider>
-                <Header />
-                <Templates />
-                <Mainbody />
-              </DocumentsNameContextProvider>
-            ) : (
-              <Navigate to={ROUTE_PATHS.LOGIN} replace />
-            )}
-            />
-
-            {/* displays the document questions */}
-            <Route path={ROUTE_PATHS.QUESTION_PAPER} element={isLoggedIn ? (
-              <DocumentContextProvider>
-                <ThemeProvider>
-                  <FormHeader />
-                  <CenteredTabs />
-                </ThemeProvider>
-              </DocumentContextProvider>
-            ) : (
-              <Navigate
-                to={{ pathname: ROUTE_PATHS.LOGIN }}
-                state={{ from: location.pathname }}
+              {/* main page to display templates and documents  */}
+              <Route path={ROUTE_PATHS.HOME} element={isLoggedIn ? (
+                <>
+                  <Header />
+                  <Templates />
+                  <Mainbody />
+                </>
+              ) : (
+                <Navigate to={ROUTE_PATHS.LOGIN} replace />
+              )}
               />
-            )}
-            />
 
-            {/* navigates to home page if user visits invalid route */}
-            <Route path={"*"} element={<Navigate to={ROUTE_PATHS.LOGIN} replace />}></Route>
-          </Routes>
+              {/* displays the document questions */}
+              <Route path={ROUTE_PATHS.QUESTION_PAPER} element={isLoggedIn ? (
+                <DocumentContextProvider>
+                  <ThemeProvider>
+                    <FormHeader />
+                    <CenteredTabs />
+                  </ThemeProvider>
+                </DocumentContextProvider>
+              ) : (
+                <Navigate
+                  to={{ pathname: ROUTE_PATHS.LOGIN }}
+                  state={{ from: location.pathname }}
+                />
+              )}
+              />
+
+              {/* navigates to home page if user visits invalid route */}
+              <Route path={"*"} element={<Navigate to={ROUTE_PATHS.LOGIN} replace />}></Route>
+            </Routes>
+          </DocumentsNameContextProvider>
         </GuideProvider>
       </BrowserRouter >
       <Toaster />

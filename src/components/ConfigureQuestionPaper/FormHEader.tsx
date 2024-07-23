@@ -16,9 +16,11 @@ import { HTTP_METHODS, QUESTION_ACTION_TYPES, REQUEST_FAILURE_MESSAGES, REQUEST_
 import useAxios from "utils/axios";
 import ProfileButton from "components/common/Dropdown";
 import { useDocument } from "components/contexts/questions-context";
+import { useDocumentsName } from "components/contexts/documents-context";
 
 function FormHeader() {
   const { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
+  const { files, setFiles } = useDocumentsName();
   const { viewDocument, documentName, dispatch } = useDocument();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -53,6 +55,9 @@ function FormHeader() {
   const sendDeleteRequest = async () => {
     const res = await HttpRequestController(REQUEST_URLS.DELETE_DOCUMENT + `/${params.documentId}`, HTTP_METHODS.DELETE);
     if (res) {
+      setFiles(files.filter((file: any) => {
+        return file._id !== res.documentId
+      }));
       goToHomeScreen();
     }
   }

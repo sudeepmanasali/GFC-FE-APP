@@ -8,12 +8,14 @@ import useAxios from "../../utils/axios";
 import { HTTP_METHODS, REQUEST_FAILURE_MESSAGES, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
 import getUserInfo from "../../utils/auth-validate";
+import { useDocumentsName } from "components/contexts/documents-context";
 
 // template documents displayed below the header in home page
 export function Templates() {
   let { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
   let navigate = useNavigate();
   let { user } = getUserInfo();
+  const { files, setFiles } = useDocumentsName();
 
   // default questions to create new document
   let defaultQuestions = [
@@ -37,6 +39,10 @@ export function Templates() {
       createdByUserID: user.userId
     });
     if (res) {
+      // add new document to files
+      let updatedFilesArr = [...files, res.document];
+      setFiles(updatedFilesArr);
+
       // if form created successfully it will navigate to nextpage
       navigate(`/forms/${res?.documentId}`, { state: { edit: true } });
     }

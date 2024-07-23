@@ -12,7 +12,7 @@ import Tour from 'reactour';
 
 // Header displayed on home page
 export const Header = memo(() => {
-  const { filterFiles } = useDocumentsName();
+  const { handleInputChange } = useDocumentsName();
   const { guideTour, closeTour, homePageGuide } = useGuide();
 
   return <div className="header">
@@ -25,7 +25,7 @@ export const Header = memo(() => {
       <IconButton>
         <SearchIcon />
       </IconButton>
-      <input type="text" placeholder="Search" onChange={(e) => filterFiles(e.target.value)} />
+      <input type="text" placeholder="Search" onChange={(e) => handleInputChange(e.target.value)} />
     </div>
     <div className="row">
       <IconButton style={{ margin: "0px" }}>

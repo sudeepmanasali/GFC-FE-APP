@@ -4,7 +4,7 @@ import CropOriginalIcon from '@mui/icons-material/CropOriginal';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
-import { Accordion, Button, Tooltip } from "@mui/material";
+import { Accordion, Button, debounce, Tooltip } from "@mui/material";
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import { useEffect, useState } from "react";
@@ -113,33 +113,31 @@ export function QuestionForm() {
   }
 
   // Function to handle scroll event
-  const handleScroll = (event: any) => {
-    setTimeout(() => {
-      const isVisible = isElementBoxVisible();
-      if (isVisible) {
-        updateToolBoxPosition();
-      } else {
-        setYOffset(event.target.scrollTop);
-      }
-    }, 300);
+  const handleScrollFunction = (event: any) => {
+    if (isElementBoxVisible()) {
+      updateToolBoxPosition();
+    } else {
+      setYOffset(event.target.scrollTop);
+    }
   };
 
+  const handleScroll = debounce(handleScrollFunction, 50);
+
   // updates tool box position when new question box is added
-  const updateToolBoxPosition = (): void => {
-    setTimeout(() => {
-      if (!isElementBoxVisible()) {
-        document.getElementById(currentFocusedQuestionId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  const handleUpdateToolBoxPosition = (): void => {
+    if (!isElementBoxVisible()) {
+      document.getElementById(currentFocusedQuestionId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    } else {
+      const accordionRect = document.getElementById(currentFocusedQuestionId)?.getBoundingClientRect();
+      if (accordionRect) {
+        const scrollTop = document.getElementsByClassName('question-form')[0].scrollTop;
+        let targetTopRelativeToDiv = accordionRect.top - 120 + scrollTop;
+        setYOffset(targetTopRelativeToDiv);
       }
-      if (isElementBoxVisible()) {
-        const accordionRect = document.getElementById(currentFocusedQuestionId)?.getBoundingClientRect();
-        if (accordionRect) {
-          const scrollTop = document.getElementsByClassName('question-form')[0].scrollTop;
-          let targetTopRelativeToDiv = accordionRect.top - 120 + scrollTop;
-          setYOffset(targetTopRelativeToDiv);
-        }
-      }
-    }, 300);
+    }
   }
+
+  const updateToolBoxPosition = debounce(handleUpdateToolBoxPosition, 300);
 
   function onDragEnd(result: any) {
     if (!result.destination) {
@@ -194,7 +192,6 @@ export function QuestionForm() {
       position: "bottom-right"
     });
   }
-
 
   const displayQuestions = () => {
     return questions.map((question: Question, i: any) => {
