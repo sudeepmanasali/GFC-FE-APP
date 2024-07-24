@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { validateTokenAge } from 'utils/auth-validate';
 import { ROUTE_PATHS, SESSION_STORAGE_KEYS } from 'utils/constants';
 
@@ -57,7 +57,6 @@ const documentPageGuide = [
 
 const GuideProvider: React.FC<any> = ({ children }) => {
   const [guideTour, setGuideTour] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,7 +75,7 @@ const GuideProvider: React.FC<any> = ({ children }) => {
     if (!validateTokenAge()) {
       navigate(ROUTE_PATHS.LOGIN);
     }
-  }, [location]);
+  }, [window.location.href]);
 
   // stop the guide tour
   const closeTour = () => {

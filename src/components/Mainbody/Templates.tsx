@@ -40,7 +40,7 @@ export function Templates() {
     });
     if (res) {
       // add new document to files
-      let updatedFilesArr = [...files, res.document];
+      let updatedFilesArr = [...files, { ...res.document, _id: res.documentId }];
       setFiles(updatedFilesArr);
 
       // if form created successfully it will navigate to nextpage

@@ -3,12 +3,14 @@ import getUserInfo from "utils/auth-validate";
 import useAxios from "utils/axios";
 import { REQUEST_URLS, HTTP_METHODS, LOADING, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES } from "utils/constants";
 import { debounce } from "utils/util";
+import { useAuth } from "./auth-context";
 
 // context to get all documents
 const DocumentsNameContext = createContext<null | any>(null);
 
 // provides the documents to child components
 const DocumentsNameContextProvider: React.FC<any> = ({ children }) => {
+  let { isLoggedIn } = useAuth();
   let { HttpRequestController, handlePromiseRequest } = useAxios();
   const [files, setFiles] = useState([]);
 
@@ -27,8 +29,10 @@ const DocumentsNameContextProvider: React.FC<any> = ({ children }) => {
   }, [files]);
 
   useEffect(() => {
-    handlePromiseRequest(getDocuments, LOADING, REQUEST_SUCCESS_MESSAGES.FORMS_LOADED_SUCCESSFULLY, REQUEST_FAILURE_MESSAGES.DOCUMENT_LOADING_FAILED);
-  }, []);
+    if (isLoggedIn) {
+      handlePromiseRequest(getDocuments, LOADING, REQUEST_SUCCESS_MESSAGES.FORMS_LOADED_SUCCESSFULLY, REQUEST_FAILURE_MESSAGES.DOCUMENT_LOADING_FAILED);
+    }
+  }, [isLoggedIn]);
 
   // to filter documents based on search key entered by user
   const filterFiles = (value: string) => {
