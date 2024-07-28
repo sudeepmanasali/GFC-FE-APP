@@ -9,7 +9,7 @@ import { useDocumentsName } from "components/contexts/documents-context";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
-export const Mainbody = () => {
+export default function Mainbody() {
   // view document list in table or like files
   const [type, setType] = useState(FOLDER_VIEW_TYPE.FILE);
   const { filteredFiles } = useDocumentsName();

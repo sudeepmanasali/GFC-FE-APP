@@ -21,19 +21,17 @@ import { QuestionBoxFooter } from './QuestionBoxFooter';
 import "./QuestionUI.scss";
 import { SelectBox } from './SelectBox';
 import { useDocument } from 'components/contexts/questions-context';
-import getUserInfo from 'utils/auth-validate';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 const SAVING = 'Saving...';
 export function QuestionForm() {
   const [yoffset, setYOffset] = useState(0);
   const [answers, setAnswers] = useState<Answers>();
-  let { user } = getUserInfo();
   let params = useParams();
   let navigate = useNavigate();
   let { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
-  let { questions, dispatch, currentFocusedQuestionId, documentName, documentDescription, viewDocument, createdByUserID
-  } = useDocument();
+  let { questions, dispatch, currentFocusedQuestionId, documentName,
+    documentDescription, viewDocument, createdByUserID, user } = useDocument();
 
   useEffect(() => {
     if (viewDocument) {
@@ -90,7 +88,8 @@ export function QuestionForm() {
       let payload = {
         documentId: params.documentId,
         answers,
-        userId: user.userId
+        userId: user.userId,
+        username: user.username
       }
       await HttpRequestController(`${REQUEST_URLS.USER_RESPONSE}/${params.documentId}`, HTTP_METHODS.POST, payload);
       toast.success(REQUEST_SUCCESS_MESSAGES.REQUEST_SAVED_SUCCESSFULLY);

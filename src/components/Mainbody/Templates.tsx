@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Templates.scss";
 import blank from "../../assets/images/forms-blank-googlecolors.png";
 import UnfoldMoreSharpIcon from '@mui/icons-material/UnfoldMoreSharp';
@@ -7,15 +7,15 @@ import { IconButton } from "@mui/material";
 import useAxios from "../../utils/axios";
 import { HTTP_METHODS, REQUEST_FAILURE_MESSAGES, REQUEST_IN_PROGRESS, REQUEST_SUCCESS_MESSAGES, REQUEST_URLS } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
-import getUserInfo from "../../utils/auth-validate";
 import { useDocumentsName } from "components/contexts/documents-context";
+import { useAuth } from "components/contexts/auth-context";
 
 // template documents displayed below the header in home page
 export function Templates() {
   let { HttpRequestController, isRequestPending, handlePromiseRequest } = useAxios();
   let navigate = useNavigate();
-  let { user } = getUserInfo();
   const { files, setFiles } = useDocumentsName();
+  const { user } = useAuth();
 
   // default questions to create new document
   let defaultQuestions = [

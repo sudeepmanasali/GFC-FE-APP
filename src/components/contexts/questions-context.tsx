@@ -1,6 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import getUserInfo from "utils/auth-validate";
 import useAxios from "utils/axios";
 import {
   REQUEST_URLS, HTTP_METHODS, QUESTION_ACTION_TYPES, DocumentInitialState,
@@ -9,6 +8,7 @@ import {
 } from "utils/constants";
 import { Question } from "utils/Question";
 import socket from "utils/SocketManager";
+import { useAuth } from "./auth-context";
 
 const DocumentContext = createContext<null | any>(null);
 
@@ -231,7 +231,7 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
   let [formResponses, setFormResponses] = useState<ResponseData | any>([]);
   let [rows, setRows] = useState<ResponseData | any>([]);
   let { HttpRequestController, handlePromiseRequest, isRequestPending } = useAxios();
-  let { user } = getUserInfo();
+  let { user } = useAuth();
   const [
     { questions, documentName, documentDescription, currQueIndex, currentFocusedQuestionId, viewDocument, createdByUserID }, dispatch
   ] = useReducer(reducer, initialState);
@@ -274,8 +274,9 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
     // lively it will update the table with new row 
     socket.on(SOCKET_CHANNEL_NAMES.USER_RESPONSE, (newData: any) => {
       if (newData.documentId == params.documentId) {
-        let newFormResponse = createRow(newData.username, newData.submittedOn);
+        let newFormResponse = createRow(newData.userId.username, newData.submittedOn);
         setRows([...rowsData, newFormResponse]);
+        setFormResponses([...responseData.formResponses, newData])
       }
     });
   }
@@ -283,7 +284,7 @@ const DocumentContextProvider: React.FC<any> = ({ children }) => {
   return (
     <DocumentContext.Provider
       value={{
-        questions, documentDescription, documentName, currQueIndex, currentFocusedQuestionId, viewDocument, createdByUserID,
+        questions, documentDescription, documentName, currQueIndex, currentFocusedQuestionId, viewDocument, createdByUserID, user,
         dispatch, isRequestPending, rows, formResponses
       }}
     >

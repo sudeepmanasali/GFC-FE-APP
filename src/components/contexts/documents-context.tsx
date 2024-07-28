@@ -1,5 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import getUserInfo from "utils/auth-validate";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import useAxios from "utils/axios";
 import { REQUEST_URLS, HTTP_METHODS, LOADING, REQUEST_SUCCESS_MESSAGES, REQUEST_FAILURE_MESSAGES } from "utils/constants";
 import { debounce } from "utils/util";
@@ -10,19 +9,18 @@ const DocumentsNameContext = createContext<null | any>(null);
 
 // provides the documents to child components
 const DocumentsNameContextProvider: React.FC<any> = ({ children }) => {
-  let { isLoggedIn } = useAuth();
   let { HttpRequestController, handlePromiseRequest } = useAxios();
   const [files, setFiles] = useState([]);
+  let { isLoggedIn, user } = useAuth();
 
   // stores the filtered documents based on search key
   const [filteredFiles, setFilteredFiles] = useState(files);
-  const { user } = getUserInfo();
 
   // retrives all the documents created by the user
-  const getDocuments = async () => {
+  const getDocuments = useCallback(async () => {
     let res = await HttpRequestController(REQUEST_URLS.GET_ALL_DOCUMENTS, HTTP_METHODS.POST, { userId: user.userId });
     setFiles(res?.documents || []);
-  }
+  }, [user]);
 
   useEffect(() => {
     setFilteredFiles(files || []);
@@ -42,10 +40,17 @@ const DocumentsNameContextProvider: React.FC<any> = ({ children }) => {
     setFilteredFiles(filtered);
   }
 
-  const handleInputChange = debounce(filterFiles, 300);
+  const handleInputChange = useCallback(debounce(filterFiles, 300), [filterFiles]);
+
+  const contextValue = useMemo(() => ({
+    files,
+    filteredFiles,
+    handleInputChange,
+    setFiles
+  }), [filteredFiles, isLoggedIn]);
 
   return (
-    <DocumentsNameContext.Provider value={{ files, filteredFiles, filterFiles, handleInputChange, setFiles }} >
+    <DocumentsNameContext.Provider value={contextValue} >
       {children}
     </DocumentsNameContext.Provider>
   );

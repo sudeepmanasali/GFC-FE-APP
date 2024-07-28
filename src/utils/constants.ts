@@ -167,6 +167,7 @@ export interface ThemeContextType {
 
 export interface AuthContextType {
   isLoggedIn: boolean;
+  user: any;
   handleLogin: React.Dispatch<React.SetStateAction<any>>;
   handleLogout: React.Dispatch<React.SetStateAction<any>>;
 }
