@@ -62,7 +62,7 @@ export class Question {
   copyQuestion(): Question {
     let copyQuestion = new Question(this);
     copyQuestion.options = [...this.options];
-    copyQuestion._id = this._id.slice(0, this._id.length - 3) + createRandomString(3);
+    copyQuestion._id = new ObjectId().toString();
     copyQuestion.open = true;
     return copyQuestion;
   }

@@ -20,8 +20,8 @@ function App() {
   return (
     <div style={{ overflow: 'hidden' }}>
       <BrowserRouter>
-        <GuideProvider>
-          <DocumentsNameContextProvider>
+        <DocumentsNameContextProvider>
+          <GuideProvider>
             <Routes>
               {/* login and register page  */}
               <Route path={ROUTE_PATHS.LOGIN}
@@ -65,8 +65,8 @@ function App() {
               {/* navigates to home page if user visits invalid route */}
               <Route path={"*"} element={<Navigate to={ROUTE_PATHS.LOGIN} replace />}></Route>
             </Routes>
-          </DocumentsNameContextProvider>
-        </GuideProvider>
+          </GuideProvider>
+        </DocumentsNameContextProvider>
       </BrowserRouter >
       <Toaster />
     </div >

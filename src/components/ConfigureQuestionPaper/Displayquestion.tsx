@@ -6,24 +6,16 @@ import {
   CheckboxQuestion, DateQuestion, MultipleChoiceQuestion,
   ShortAnswerQuestion, TimeQuestion
 } from "components/common/Formcontols";
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 type propsType = { questionIndex: number, showQuestionPaper: boolean, question: Question, onChange: Function };
 
 export const DisplayQuestion: React.FC<propsType> = memo(({ questionIndex, question, showQuestionPaper, onChange }) => {
   return <div className="saved-questions">
     <Typography className="question-text">
-      {(questionIndex + 1).toString() + ". " + question.question}
+      {(questionIndex + 1).toString() + ". " + question.question} {(question.required) && <span className="required-star">*</span>}
     </Typography>
     <div className="display-options">
       <DisplayOption question={question} showQuestionPaper={showQuestionPaper} onChange={onChange} />
-      {
-        question.required && showQuestionPaper &&
-        <div className="error-text">
-          <ErrorOutlineIcon fontSize="small" style={{ marginRight: 12 }} />
-          <span> This is a required question</span>
-        </div>
-      }
     </div>
   </div>
 });

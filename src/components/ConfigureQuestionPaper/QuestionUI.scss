@@ -47,6 +47,10 @@
       padding-bottom: 2 * $xs;
       letter-spacing: 0.1;
       word-break: break-all;
+
+      .required-star {
+        color: rgb(217, 48, 37);
+      }
     }
 
     .option-box {
