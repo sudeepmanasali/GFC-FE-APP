@@ -46,6 +46,45 @@ BE code: https://github.com/sudeepmanasali/GFC-BE-APP
 
 Demo: https://youtu.be/4wCl91Rrpww
 
+Screen shots
+
+Sign up form
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/3c67db70-0138-4637-b4d9-86e481572fcc">
+
+Sign in form
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/c1c11663-42f1-4156-a7b5-83e7f3da6a96">
+
+Homepage with guide
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/09bc888b-1ecf-4046-82d2-e68955c16782">
+
+Home page, forms with Folder view
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/1d5f155d-67ed-4c3e-98ff-7cfd6d67ddda">
+
+Home page, forms with Table view
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/4f525f25-ad56-4ea4-b265-b48110c5d7db">
+
+Edit form page, with scrollable tool box
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/814e298b-c95f-4c77-be10-38ba9af6b283">
+
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/dd1e03f2-8e9e-4ef4-9abe-664e25d435f3">
+
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/28377faf-ac7d-4a65-855e-d7ddcbb42adf">
+
+Form view
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/ba236115-8b24-42e8-82ad-76674e5e958d">
+
+Response Table
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/12abda05-9ceb-46ab-850c-0451ba56383b">
+
+Viewing user response
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/3f946b6f-21f0-4d50-b885-9d92d892fbb8">
+
+Deleting the form
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/d125d770-2b2c-477c-932f-e8db15837918">
+
+Share the link of the form to collect response
+<img width="1699" alt="image" src="https://github.com/user-attachments/assets/627952df-2a63-4059-abdc-68eba0182ac0">
+
 ## Available Scripts
 
 In the project directory, you can run:
